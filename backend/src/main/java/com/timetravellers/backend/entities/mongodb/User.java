@@ -1,4 +1,4 @@
-package com.timetravellers.backend.entities;
+package com.timetravellers.backend.entities.mongodb;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

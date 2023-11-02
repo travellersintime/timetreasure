@@ -1,6 +1,6 @@
 package com.timetravellers.backend.repositories;
 
-import com.timetravellers.backend.entities.Message;
+import com.timetravellers.backend.entities.mongodb.Message;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
