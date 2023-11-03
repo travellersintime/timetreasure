@@ -1,11 +1,15 @@
 package com.timetravellers.backend.services;
 
 import com.timetravellers.backend.entities.mongodb.Message;
+import com.timetravellers.backend.entities.mongodb.Role;
+import com.timetravellers.backend.entities.mongodb.User;
 import com.timetravellers.backend.entities.to.MessageTo;
 import com.timetravellers.backend.repositories.MessageRepository;
 import com.timetravellers.backend.validators.MessageValidator;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,10 +40,21 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
+    /**
+     * Get details of a message with a certain ID. The message will only be returned back if the user is the author, the recipient, or has the ADMIN role
+     * @param id
+     * @return
+     */
     public Message findById(ObjectId id) {
         Optional<Message> message = messageRepository.findById(id);
 
         if (message.isEmpty()) {
+            return null;
+        }
+
+        // User needs to have sent that message, or received it, or be an ADMIN
+        var user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!user.getUsername().equals(message.get().getAuthor()) && !user.getUsername().equals(message.get().getRecipient()) && !user.getRole().equals(Role.ADMIN)) {
             return null;
         }
 
@@ -48,6 +63,12 @@ public class MessageService {
 
     public List<Message> findByRecipient(String recipient) {
         List<Message> messageList = messageRepository.findByRecipient(recipient);
+
+        // User needs to be that recipient, or be an ADMIN
+        var user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!user.getUsername().equals(recipient) && !user.getRole().equals(Role.ADMIN)) {
+            return null;
+        }
 
         return messageList;
     }
