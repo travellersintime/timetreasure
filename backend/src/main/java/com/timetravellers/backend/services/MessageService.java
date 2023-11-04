@@ -52,13 +52,17 @@ public class MessageService {
             return null;
         }
 
-        // User needs to have sent that message, or received it, or be an ADMIN
+        // User needs to have sent that message, or received it, or be an ADMIN, or the message should be public
         var user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!user.getUsername().equals(message.get().getAuthor()) && !user.getUsername().equals(message.get().getRecipient()) && !user.getRole().equals(Role.ADMIN)) {
-            return null;
+
+        if (message.get().isPublic()) {
+            return message.get();
+        }
+        else if (user.getUsername().equals(message.get().getAuthor()) || user.getUsername().equals(message.get().getRecipient()) || user.getRole().equals(Role.ADMIN)) {
+            return message.get();
         }
 
-        return message.get();
+        return null;
     }
 
     public List<Message> findByRecipient(String recipient) {
