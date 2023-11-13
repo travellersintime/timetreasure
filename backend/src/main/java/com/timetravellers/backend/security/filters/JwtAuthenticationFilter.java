@@ -1,7 +1,7 @@
 package com.timetravellers.backend.security.filters;
 
 import com.timetravellers.backend.security.services.JwtService;
-import com.timetravellers.backend.security.services.UserService;
+import com.timetravellers.backend.services.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
