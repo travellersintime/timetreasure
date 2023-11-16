@@ -1,18 +1,42 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SignIn from './SignIn';
+import React, { useState } from 'react';
+import {
+SafeAreaView,
+ScrollView,
+StatusBar,
+StyleSheet,
+Text,
+useColorScheme,
+View,
+TextInput,
+TouchableOpacity,
+} from 'react-native';
+import {
+Colors,
+DebugInstructions,
+Header,
+LearnMoreLinks,
+ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
 
-const Stack = createNativeStackNavigator();
+import SignIn from './components/SignIn';
 
-function App() {
+const App =  () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Sign In" component={SignIn} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={styles.container}>
+      <SignIn />
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+        flex: 1,
+        paddingHorizontal: 25,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        paddingBottom: '5',
+        position: 'relative'
+  },
+});
 
 export default App;
