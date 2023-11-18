@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import {SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TextInput,TouchableOpacity, Button, Image} from 'react-native';
 import {Colors,DebugInstructions,Header,LearnMoreLinks,ReloadInstructions} from 'react-native/Libraries/NewAppScreen';
+import { useNavigation } from '@react-navigation/native';
+import CreateAccount from './CreateAccount';
 
 const SignIn = () => {
     const handleSignIn = () => {};
     const handleForgotPassword = () => {}
-    const handleCreateAccount = () => {}
+    const navigation = useNavigation();
     const [state,setState] = useState({
         email: '',
         password: '',
@@ -39,7 +41,7 @@ const SignIn = () => {
                 <TouchableOpacity onPress={handleForgotPassword} style={styles.bottomBtn}>
                     <Text style={styles.bottomBtnText}>Forgot Password?</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleCreateAccount} style={styles.bottomBtn}>
+                <TouchableOpacity onPress={() => navigation.navigate('CreateAccount')} style={styles.bottomBtn}>
                     <Text style={styles.bottomBtnText}>Create Account</Text>
                 </TouchableOpacity>
             </View>
@@ -48,14 +50,19 @@ const SignIn = () => {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 25,
+        justifyContent: 'center',
+        position: 'relative'
+    },
     title:{
         fontWeight: "bold",
-        fontSize:50,
+        fontSize:40,
         color:"#fb5b5a",
         marginBottom: 40,
     },
     inputView:{
-        backgroundColor:"white",
+        backgroundColor: 'white',
         borderColor: 'black',
         borderRadius: 5,
         borderWidth: 1,
@@ -65,7 +72,7 @@ const styles = StyleSheet.create({
     },
     inputText:{
         flex: 1,
-        color:"black"
+        color:'black'
     },
     forgotAndSignUpText:{
         color:"white",
@@ -86,7 +93,8 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     signInText: {
-        color: 'white'
+        color: 'white',
+        fontSize: 20
     },
     bottomContainer: {
         flexDirection: 'row',
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         alignItems: 'center',
-        marginBottom: 70
+        marginBottom: 5
     },
     logo: {
         width: 400,

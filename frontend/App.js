@@ -1,30 +1,22 @@
 import React, { useState } from 'react';
-import {
-SafeAreaView,
-ScrollView,
-StatusBar,
-StyleSheet,
-Text,
-useColorScheme,
-View,
-TextInput,
-TouchableOpacity,
-} from 'react-native';
-import {
-Colors,
-DebugInstructions,
-Header,
-LearnMoreLinks,
-ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TextInput,TouchableOpacity,} from 'react-native';
+import {Colors,DebugInstructions,Header,LearnMoreLinks,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 
 import SignIn from './components/SignIn';
+import CreateAccount from './components/CreateAccount'
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
 
 const App =  () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <SignIn />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='CreateAccount'>
+        <Stack.Screen name='SignIn' component={SignIn}/>
+        <Stack.Screen name='CreateAccount' component={CreateAccount} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
