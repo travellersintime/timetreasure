@@ -15,6 +15,6 @@ public class Message {
     private String content;
     private String author;
     private String recipient;
-    private boolean isPublic;
+    private String isPublic;
     private LocalDateTime expiresOn;
 }

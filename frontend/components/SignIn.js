@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
-import {SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TextInput,TouchableOpacity, Button, Image} from 'react-native';
-import {Colors,DebugInstructions,Header,LearnMoreLinks,ReloadInstructions} from 'react-native/Libraries/NewAppScreen';
-import { useNavigation } from '@react-navigation/native';
-import CreateAccount from './CreateAccount';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Dimensions } from 'react-native';
 
-const SignIn = () => {
-    const handleSignIn = () => {};
-    const handleForgotPassword = () => {}
-    const navigation = useNavigation();
-    const [state,setState] = useState({
-        email: '',
-        password: '',
-    })
+interface Props {
+    navigation: any;
+}
+
+const SignIn = (props: Props) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSignIn = async () => {
+        try {
+          const response = await axios.post("http://192.168.1.3:8080/auth/login", {username, password})
+          await AsyncStorage.setItem('token', response.data.token);
+          props.navigation.navigate('MessageFeed');
+        } catch (error) {
+            console.log(error)
+            alert('Invalid credentials!');
+        }
+      };
+
+      const handleForgotPassword = () => {};
 
     return (
         <View style={styles.container}>
@@ -22,15 +34,15 @@ const SignIn = () => {
             <View style={styles.inputView}>
                 <TextInput 
                     style={styles.inputText}
-                    placeholder="Email"
-                    onChangeText={text => setState({email:text})}/>
+                    placeholder="Username"
+                    onChangeText={text => setUsername(text)}/>
             </View>
             <View style={styles.inputView}>
                 <TextInput
                     tyle={styles.inputText}
                     secureTextEntry
                     placeholder="Password"
-                    onChangeText={text => setState({password:text})}/>
+                    onChangeText={text => setPassword(text)}/>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={handleSignIn} style={styles.loginBtn}>
@@ -48,6 +60,8 @@ const SignIn = () => {
         </View>
     );
 }
+
+const win = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
@@ -112,8 +126,8 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     logo: {
-        width: 400,
-        height: 200,
+        width: win.width/1.25,
+        paddingTop: 200,
         resizeMode: 'contain'
     }
 

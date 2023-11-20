@@ -14,8 +14,8 @@ public class MessageTo {
     private String content;
     private String author;
     private String recipient;
+    private String isPublic;
     private LocalDateTime expiresOn;
-    private boolean isPublic;
     private int minutes;
     private int hours;
     private int days;

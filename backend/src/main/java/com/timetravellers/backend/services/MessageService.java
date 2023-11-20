@@ -8,7 +8,6 @@ import com.timetravellers.backend.repositories.MessageRepository;
 import com.timetravellers.backend.validators.MessageValidator;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +24,21 @@ public class MessageService {
     private MessageValidator messageValidator;
 
     public Message insert(MessageTo messageTo) {
-        Message message = new Message(messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient(), messageTo.isPublic(), null);
+        Message message = new Message(messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient(), messageTo.getIsPublic(), null);
 
         if (!messageValidator.isValid(message)) {
+            return null;
+        }
+
+        if (messageTo.getMinutes() < 0 || messageTo.getMinutes() >= 60) {
+            return null;
+        }
+
+        if (messageTo.getHours() < 0 || messageTo.getHours() >= 24) {
+            return null;
+        }
+
+        if (messageTo.getDays() < 0) {
             return null;
         }
 
@@ -55,7 +66,7 @@ public class MessageService {
         // User needs to have sent that message, or received it, or be an ADMIN, or the message should be public
         var user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (message.get().isPublic()) {
+        if (message.get().getIsPublic() == "true") {
             return message.get();
         }
         else if (user.getUsername().equals(message.get().getAuthor()) || user.getUsername().equals(message.get().getRecipient()) || user.getRole().equals(Role.ADMIN)) {
@@ -77,7 +88,7 @@ public class MessageService {
         return messageList;
     }
 
-    public List<Message> findByIsPublic(boolean isPublic) {
+    public List<Message> findByIsPublic(String isPublic) {
         List<Message> messageList = messageRepository.findByIsPublic(isPublic);
 
         return messageList;

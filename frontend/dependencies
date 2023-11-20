@@ -1,0 +1,4 @@
+yarn add @fortawesome/react-native-fontawesome @fortawesome/fontawesome-svg-core react-native-svg
+yarn add @fortawesome/free-solid-svg-icons
+yarn add @fortawesome/free-brands-svg-icons
+yarn add @fortawesome/free-regular-svg-icons

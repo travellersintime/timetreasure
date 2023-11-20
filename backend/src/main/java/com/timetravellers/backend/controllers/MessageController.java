@@ -16,7 +16,8 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @PostMapping("/messages/")
+    @CrossOrigin
+    @PostMapping("/messages")
     public ResponseEntity<Message> createMessage(@RequestBody MessageTo messageTo) {
         Message message = messageService.insert(messageTo);
 
@@ -27,6 +28,7 @@ public class MessageController {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+    @CrossOrigin
     @GetMapping("/messages/id/{id}")
     public ResponseEntity<Message> getById(@PathVariable ObjectId id) {
         Message message = messageService.findById(id);
@@ -40,6 +42,7 @@ public class MessageController {
         return new ResponseEntity<>(message, httpStatus);
     }
 
+    @CrossOrigin
     @GetMapping("/messages/recipient/{recipient}")
     public ResponseEntity<List<Message>> getByRecipient(@PathVariable String recipient) {
         List<Message> messageList = messageService.findByRecipient(recipient);
@@ -53,8 +56,9 @@ public class MessageController {
         return new ResponseEntity<>(messageList, httpStatus);
     }
 
+    @CrossOrigin
     @GetMapping("/messages/isPublic/{isPublic}")
-    public ResponseEntity getByIsPublic(@PathVariable boolean isPublic) {
+    public ResponseEntity getByIsPublic(@PathVariable String isPublic) {
         List<Message> messageList = messageService.findByIsPublic(isPublic);
 
         HttpStatus httpStatus = HttpStatus.OK;

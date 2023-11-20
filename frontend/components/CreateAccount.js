@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import {SafeAreaView,ScrollView,StatusBar,StyleSheet,Text,useColorScheme,View,TextInput,TouchableOpacity, Button, Image} from 'react-native';
-import {Colors,DebugInstructions,Header,LearnMoreLinks,ReloadInstructions} from 'react-native/Libraries/NewAppScreen';
+import { StyleSheet,Text,View,TextInput,TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import SignIn from './SignIn';
 
 const CreateAccount = () => {
     const navigation = useNavigation();

@@ -13,9 +13,10 @@ const Stack = createStackNavigator();
 const App =  () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='MessageFeed'>
+      <Stack.Navigator initialRouteName='SignIn' screenOptions={{headerShown: false}}>
         <Stack.Screen name='SignIn' component={SignIn}/>
         <Stack.Screen name='CreateAccount' component={CreateAccount} />
+        <Stack.Screen name='MessageFeed' component={MessageFeed} />
       </Stack.Navigator>
     </NavigationContainer>
   );
