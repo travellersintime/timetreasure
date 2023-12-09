@@ -66,7 +66,7 @@ public class MessageService {
         // User needs to have sent that message, or received it, or be an ADMIN, or the message should be public
         var user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (message.get().getIsPublic() == "true") {
+        if (message.get().getIsPublic().equals("true")) {
             return message.get();
         }
         else if (user.getUsername().equals(message.get().getAuthor()) || user.getUsername().equals(message.get().getRecipient()) || user.getRole().equals(Role.ADMIN)) {

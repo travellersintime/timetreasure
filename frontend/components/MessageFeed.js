@@ -11,6 +11,7 @@ import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
 import { isExpired, convertToDaysHoursMinutesFormat } from '../helpers/DateFunctions';
 
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface Props {
     navigation: any;
@@ -79,8 +80,17 @@ const MessageFeed = (props: Props) => {
                                 { isExpired(date, message.expiresOn) == true ? <Text>0d 0h 0m</Text> : <Text>{convertToDaysHoursMinutesFormat(date, message.expiresOn)}</Text> }
                             </View>
                         </View>
+                        <View style={styles.containerRow}>
+                            <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage', {
+                                messageId: message.id
+                            })}>
+                                <Text style={styles.controlText}>Open</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage')}>
+                                <Text style={styles.controlText}>Delete</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-
                 ))}
             </ScrollView>
         </SafeAreaView>
@@ -124,6 +134,15 @@ const styles=StyleSheet.create({
 
         scrollView: {
             marginBottom: 50
+        },
+        
+        controlTouchableOpacity: {
+            marginRight: 10
+        },
+
+        controlText: {
+            fontWeight: 'bold',
+            color:"#fb5b5a"
         }
     });
 
