@@ -4,6 +4,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dimensions } from 'react-native';
 
+import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
+
 interface Props {
     navigation: any;
 }
@@ -14,7 +16,7 @@ const SignIn = (props: Props) => {
 
     const handleSignIn = async () => {
         try {
-          const response = await axios.post("http://192.168.1.3:8080/auth/login", {username, password})
+          const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/login", {username, password})
           await AsyncStorage.setItem('token', response.data.token);
           props.navigation.navigate('MessageFeed');
         } catch (error) {

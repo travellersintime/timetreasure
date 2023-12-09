@@ -10,6 +10,8 @@ import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
 import { isExpired, convertToDaysHoursMinutesFormat } from '../helpers/DateFunctions';
 
+import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
+
 interface Props {
     navigation: any;
 }
@@ -28,7 +30,7 @@ const MessageFeed = (props: Props) => {
 
             const response = 
                 await axios.get (
-                    "http://192.168.1.3:8080/messages/isPublic/true", 
+                    "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/isPublic/true", 
                     {
                         headers: {
                             'Authorization': authorizationHeader
