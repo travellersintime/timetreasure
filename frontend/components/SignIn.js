@@ -18,6 +18,7 @@ const SignIn = (props: Props) => {
           const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/login", {username, password})
           console.log(username);
           await AsyncStorage.setItem('token', response.data.token);
+          await AsyncStorage.setItem('username', username);
           props.navigation.navigate('MessageFeed');
         } catch (error) {
             console.log(error)
