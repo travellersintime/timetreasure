@@ -37,12 +37,12 @@ const SignIn = (props: Props) => {
             <View style={styles.inputView}>
                 <TextInput 
                     style={styles.inputText}
-                    placeholder="Username"
+                    placeholder="Email"
                     onChangeText={text => setUsername(text)}/>
             </View>
             <View style={styles.inputView}>
                 <TextInput
-                    tyle={styles.inputText}
+                    style={styles.inputText}
                     secureTextEntry
                     placeholder="Password"
                     onChangeText={text => setPassword(text)}/>
@@ -56,7 +56,7 @@ const SignIn = (props: Props) => {
                 <TouchableOpacity onPress={handleForgotPassword} style={styles.bottomBtn}>
                     <Text style={styles.bottomBtnText}>Forgot Password?</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('CreateAccount')} style={styles.bottomBtn}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('CreateAccount')} style={styles.bottomBtn}>
                     <Text style={styles.bottomBtnText}>Create Account</Text>
                 </TouchableOpacity>
             </View>

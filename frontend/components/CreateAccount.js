@@ -1,14 +1,31 @@
 import React, { useState } from 'react';
 import { StyleSheet,Text,View,TextInput,TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-const CreateAccount = () => {
+interface Props {
+    navigation: any;
+}
+
+const CreateAccount = (props: Props) => {
     const navigation = useNavigation();
-    const handleCreateAccount = () => {}
-    const [state,setState] = useState({
-        email: '',
-        password: '',
-    })
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleCreateAccount = async () => {
+        try {
+        console.log({username, password});
+          const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/register", {username, password})
+          await AsyncStorage.setItem('token', response.data.token);
+          props.navigation.navigate('MessageFeed');
+        } catch (error) {
+            console.log(error)
+            console.log(BACKEND_ADDRESS)
+            alert(error);
+        }
+      };
 
     return (
         <View style={styles.container}>
@@ -17,18 +34,18 @@ const CreateAccount = () => {
                 <TextInput
                     style={styles.inputText}
                     placeholder='Email'
-                    onChangeText={text => setState({email:text})}/>
+                    onChangeText={text => setUsername(text)}/>
             </View>
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.inputText}
                     secureTextEntry
                     placeholder='Password'
-                    onChangeText={text => setState({password:text})}/>
+                    onChangeText={text => setPassword(text)}/>
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={handleCreateAccount} style={styles.continueBtn}>
-                    <Text style={styles.continueText}>Continue</Text>
+                    <Text style={styles.continueText}>Register</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.signInContainer}>
