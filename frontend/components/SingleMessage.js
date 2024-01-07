@@ -4,7 +4,7 @@ import {
     SafeAreaView
   } from 'react-native-safe-area-context';
 import axios from 'axios';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
 
@@ -32,8 +32,11 @@ const SingleMessage = (props: Props) => {
                     "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/id/" + messageId, 
                     {
                         headers: {
-                            'Authorization': authorizationHeader
-                        }
+                            'Authorization': authorizationHeader, 
+                            'Content-type': 'application/x-www-form-urlencoded', 
+                            'Accept': 'Application/json',
+                        },
+                        data:undefined
                     }
                 )
             

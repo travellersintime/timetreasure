@@ -4,7 +4,7 @@ import {
     SafeAreaView
   } from 'react-native-safe-area-context';
 import axios from 'axios';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
@@ -34,8 +34,11 @@ const MessageFeed = (props: Props) => {
                     "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/isPublic/true", 
                     {
                         headers: {
-                            'Authorization': authorizationHeader
-                        }
+                            'Authorization': authorizationHeader, 
+                            'Content-type': 'application/x-www-form-urlencoded', 
+                            'Accept': 'Application/json',
+                        },
+                        data:undefined
                     }
                 )
             
@@ -47,6 +50,7 @@ const MessageFeed = (props: Props) => {
             setLoading(false);
         } catch (error) {
             console.log(error)
+            alert("Message feed")
         }
       };
 

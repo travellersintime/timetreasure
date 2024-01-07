@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'reac
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dimensions } from 'react-native';
-
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 
 interface Props {
@@ -17,11 +16,13 @@ const SignIn = (props: Props) => {
     const handleSignIn = async () => {
         try {
           const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/login", {username, password})
+          console.log(username);
           await AsyncStorage.setItem('token', response.data.token);
           props.navigation.navigate('MessageFeed');
         } catch (error) {
             console.log(error)
-            alert('Invalid credentials!');
+            console.log(BACKEND_ADDRESS)
+            alert(error);
         }
       };
 
