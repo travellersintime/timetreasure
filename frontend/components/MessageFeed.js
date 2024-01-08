@@ -4,11 +4,16 @@ import {
     SafeAreaView
   } from 'react-native-safe-area-context';
 import axios from 'axios';
+import { Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
+import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse'
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
 import { isExpired, convertToDaysHoursMinutesFormat } from '../helpers/DateFunctions';
+
+
 
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -16,6 +21,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 interface Props {
     navigation: any;
 }
+
+const screenHeight = Dimensions.get('window').height;
 
 const MessageFeed = (props: Props) => {
     const [messages, setMessages] = useState([]);
@@ -66,8 +73,9 @@ const MessageFeed = (props: Props) => {
     }
     return (
         <SafeAreaView style={styles.safeAreaView}>
+            <View style={{flex: .95}}>
             <Text style = {styles.title}>Public Messages</Text>
-            <ScrollView style={styles.scrollView}>
+            <ScrollView style={styles.scrollView} >
                 {messages.map((message, index) => (
                     <View key={index} style={styles.container}>
                         <View style={styles.containerRow}>
@@ -96,6 +104,20 @@ const MessageFeed = (props: Props) => {
                     </View>
                 ))}
             </ScrollView>
+            </View>
+            
+            <View style={{flex: .05}}>
+                <TouchableOpacity>
+                    <FontAwesomeIcon icon={faUser}/>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <FontAwesomeIcon icon={faHouse}/>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <FontAwesomeIcon icon={faCirclePlus}/>
+                </TouchableOpacity>
+            </View>
+            
         </SafeAreaView>
     )
 
@@ -132,11 +154,13 @@ const styles=StyleSheet.create({
         },
 
         safeAreaView: {
-            padding: 20
+            padding: 20,
+            flex: 1
         },
 
         scrollView: {
-            marginBottom: 50
+            marginBottom: 50,
+            maxHeight: {screenHeight}
         },
         
         controlTouchableOpacity: {
@@ -146,7 +170,17 @@ const styles=StyleSheet.create({
         controlText: {
             fontWeight: 'bold',
             color:"#fb5b5a"
-        }
+        },
+
+        bottomContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: '1000'
+        },
+
+        bottomBtn: {
+        paddingVertical: 30,
+        },
     });
 
 export default MessageFeed;
