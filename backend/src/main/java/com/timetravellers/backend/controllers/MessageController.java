@@ -22,10 +22,10 @@ public class MessageController {
         Message message = messageService.insert(messageTo);
 
         if (message == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("There was an error while creating the message.", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return new ResponseEntity(message, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -33,13 +33,11 @@ public class MessageController {
     public ResponseEntity<Message> getById(@PathVariable ObjectId id) {
         Message message = messageService.findById(id);
 
-        HttpStatus httpStatus = HttpStatus.OK;
-
         if (message == null) {
-            httpStatus = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity("Message with given ID does not exist.", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(message, httpStatus);
+        return new ResponseEntity(message, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -47,13 +45,11 @@ public class MessageController {
     public ResponseEntity<List<Message>> getByRecipient(@PathVariable String recipient) {
         List<Message> messageList = messageService.findByRecipient(recipient);
 
-        HttpStatus httpStatus = HttpStatus.OK;
-
-        if (messageList.size() == 0) {
-            httpStatus = HttpStatus.BAD_REQUEST;
+        if (messageList == null) {
+            return new ResponseEntity("Could not process messages for given recipient ID.", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(messageList, httpStatus);
+        return new ResponseEntity(messageList, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -61,12 +57,10 @@ public class MessageController {
     public ResponseEntity getByIsPublic(@PathVariable String isPublic) {
         List<Message> messageList = messageService.findByIsPublic(isPublic);
 
-        HttpStatus httpStatus = HttpStatus.OK;
-
-        if (messageList.size() == 0) {
-            httpStatus = HttpStatus.BAD_REQUEST;
+        if (messageList == null) {
+            return new ResponseEntity("Could not process messages for given recipient ID.", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(messageList, httpStatus);
+        return new ResponseEntity(messageList, HttpStatus.OK);
     }
 }
