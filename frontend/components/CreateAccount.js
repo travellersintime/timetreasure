@@ -23,7 +23,7 @@ const CreateAccount = (props: Props) => {
         } catch (error) {
             alert(error.response.data);
         }
-      };
+    };
 
     return (
         <View style={styles.container}>

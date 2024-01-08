@@ -106,15 +106,15 @@ const MessageFeed = (props: Props) => {
             </ScrollView>
             </View>
             
-            <View style={{flex: .05}}>
-                <TouchableOpacity>
-                    <FontAwesomeIcon icon={faUser}/>
+            <View style={{flex: 0.05, flexDirection: 'row', justifyContent: 'space-around', marginTop: 10}}>
+                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MyProfile')}>
+                    <FontAwesomeIcon icon={faUser} size="30"/>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                    <FontAwesomeIcon icon={faHouse}/>
+                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MessageFeed')}>
+                    <FontAwesomeIcon icon={faHouse} size="30"/>
                 </TouchableOpacity>
-                <TouchableOpacity>
-                    <FontAwesomeIcon icon={faCirclePlus}/>
+                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MessageFeed')}>
+                    <FontAwesomeIcon icon={faCirclePlus} size="30"/>
                 </TouchableOpacity>
             </View>
             
@@ -172,14 +172,8 @@ const styles=StyleSheet.create({
             color:"#fb5b5a"
         },
 
-        bottomContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginTop: '1000'
-        },
-
         bottomBtn: {
-        paddingVertical: 30,
+            paddingVertical: 20,
         },
     });
 

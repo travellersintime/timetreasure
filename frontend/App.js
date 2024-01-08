@@ -6,6 +6,8 @@ import SignIn from './components/SignIn';
 import CreateAccount from './components/CreateAccount'
 import MessageFeed from './components/MessageFeed';
 import SingleMessage from './components/SingleMessage';
+import CreateTextMessage from './components/CreateTextMessage';
+import MyProfile from './components/MyProfile'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -20,6 +22,8 @@ const App =  () => {
         <Stack.Screen name='CreateAccount' component={CreateAccount} />
         <Stack.Screen name='MessageFeed' component={MessageFeed} />
         <Stack.Screen name='SingleMessage' component={SingleMessage} />
+        <Stack.Screen name='CreateTextMessage' component={CreateTextMessage} />
+        <Stack.Screen name='MyProfile' component={MyProfile} />
       </Stack.Navigator>
     </NavigationContainer>
   );
