@@ -5,10 +5,12 @@ import com.timetravellers.backend.entities.mongodb.User;
 import com.timetravellers.backend.entities.to.AuthRequestTo;
 import com.timetravellers.backend.entities.to.AuthResponseTo;
 import com.timetravellers.backend.exceptions.InvalidEmailException;
+import com.timetravellers.backend.exceptions.InvalidPasswordException;
 import com.timetravellers.backend.exceptions.UserAlreadyExistsException;
 import com.timetravellers.backend.exceptions.UserDoesNotExistException;
 import com.timetravellers.backend.repositories.UserRepository;
 import com.timetravellers.backend.validators.EmailValidator;
+import com.timetravellers.backend.validators.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,18 +31,25 @@ public class AuthenticationService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private EmailValidator emailValidator;
+    @Autowired
+    private PasswordValidator passwordValidator;
 
     /**
      * This method inserts a new user into the database (with encoded password) and returns a newly generated JWT token for that user
      * @param authRequestTo
      * @return
      */
-    public AuthResponseTo register(AuthRequestTo authRequestTo) throws UserAlreadyExistsException, InvalidEmailException {
+    public AuthResponseTo register(AuthRequestTo authRequestTo) throws UserAlreadyExistsException, InvalidEmailException, InvalidPasswordException {
         Optional<User> userOptional = userRepository.findByUsername(authRequestTo.getUsername());
 
         // Check if the E-Mail (expressed as Username) is valid
         if (!emailValidator.validate(authRequestTo.getUsername())) {
             throw new InvalidEmailException();
+        }
+
+        // Check if the password is at least 8 characters long
+        if (!passwordValidator.validate(authRequestTo.getPassword())) {
+            throw new InvalidPasswordException();
         }
 
         // Check if the user already exists

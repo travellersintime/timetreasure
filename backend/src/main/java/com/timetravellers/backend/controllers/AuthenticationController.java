@@ -3,6 +3,7 @@ package com.timetravellers.backend.controllers;
 import com.timetravellers.backend.entities.to.AuthRequestTo;
 import com.timetravellers.backend.entities.to.AuthResponseTo;
 import com.timetravellers.backend.exceptions.InvalidEmailException;
+import com.timetravellers.backend.exceptions.InvalidPasswordException;
 import com.timetravellers.backend.exceptions.UserAlreadyExistsException;
 import com.timetravellers.backend.exceptions.UserDoesNotExistException;
 import com.timetravellers.backend.security.services.AuthenticationService;
@@ -32,7 +33,10 @@ public class AuthenticationController {
         catch (InvalidEmailException e) {
             return new ResponseEntity("E-mail is invalid.", HttpStatus.BAD_REQUEST);
         }
-        finally {
+        catch (InvalidPasswordException e) {
+            return new ResponseEntity("Password needs to be at least 8 characters long.", HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e) {
             return new ResponseEntity("There was an error while attempting the registration.", HttpStatus.BAD_REQUEST);
         }
     }

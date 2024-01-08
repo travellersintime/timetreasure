@@ -50,7 +50,7 @@ const SingleMessage = (props: Props) => {
                 props.navigation.navigate('MessageFeed');
             }
         } catch (error) {
-            console.log(error)
+            alert(error.data);
         }
       };
 

@@ -49,8 +49,7 @@ const MessageFeed = (props: Props) => {
             setMessages(response.data);
             setLoading(false);
         } catch (error) {
-            console.log(error)
-            alert("Message feed")
+            console.log(error.data)
         }
       };
 
