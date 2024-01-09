@@ -5,9 +5,11 @@ import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane'
-import { Calendar } from 'react-native-calendars';
+import { faCalendar } from '@fortawesome/free-solid-svg-icons/faCalendar'
+import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
 import Footer from './Footer';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
     navigation: any;
@@ -20,6 +22,7 @@ const CreateTextMessage = (props: Props) => {
     const [messageContent, setMessageContent] = useState('');
     const [messageDate, setMessageDate] = useState(new Date());
     const [contentHeight, setContentHeight] = useState(0);
+    const [messageRecipient, setMessageRecipient] = useState('');
     const [showDate, setShowDate] = useState(false);
     const [showTime, setShowTime] = useState(false);
 
@@ -43,14 +46,27 @@ const CreateTextMessage = (props: Props) => {
 
     const handleSendMessage = async () => {
         try {
-            const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/send", {
-                type: messageType,
+            const token = await AsyncStorage.getItem("token");
+
+            const authorizationHeader = 'Bearer ' + token;
+
+            const username = await AsyncStorage.getItem("username");
+            const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages", {
                 title: messageTitle,
                 content: messageContent,
-                date: messageDate
+                author: username,
+                recipient: messageRecipient,
+                isPublic: messageType === "private" ? "false" : "true",
+                expiresOn: new Date(messageDate.getTime() + 7200 * 1000)
+            }, {
+                headers: {
+                    'Authorization': authorizationHeader, 
+                }
             });
+
+            alert("Message sent successfully.");
+            navigation.navigate('MessageFeed');
         } catch (error) {
-            console.log(error)
             alert(error.response.data);
         }
     };
@@ -82,6 +98,18 @@ const CreateTextMessage = (props: Props) => {
                         <Text>Public</Text>
                     </TouchableOpacity>
                 </View>
+                {
+                    messageType === "private" &&
+                    (
+                        <View style={styles.inputTitle}>
+                        <TextInput
+                            style={styles.inputText}
+                            placeholder='Type the destination E-Mail address'
+                            onChangeText={text => setMessageRecipient(text)}
+                        />
+                    </View>
+                    )
+                }
                 <View style={styles.inputTitle}>
                     <TextInput
                         style={styles.inputText}
@@ -100,12 +128,19 @@ const CreateTextMessage = (props: Props) => {
                 </View>
                 <View style={styles.calendarContainer}>
                     <Text style={styles.calendarText}>When should the message be unlocked?</Text>
+                    
                     <View>
-                        <TouchableOpacity onPress={() => handleShowDate()}>
-                            <Text>{messageDate.toLocaleDateString()}</Text>
+                        <TouchableOpacity onPress={() => handleShowDate()} style={[styles.messageTypeButton, styles.messageTypeButtonFullWidth]}>
+                            <View style={styles.containerRow}>
+                                <FontAwesomeIcon icon={faCalendar}/>
+                                <Text> {messageDate.toLocaleDateString()}</Text>
+                            </View>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleShowTime()}>
-                            <Text>{messageDate.toLocaleTimeString()}</Text>
+                        <TouchableOpacity onPress={() => handleShowTime()} style={[styles.messageTypeButton, styles.messageTypeButtonFullWidth]}>
+                        <View style={styles.containerRow}>
+                                <FontAwesomeIcon icon={faClock}/>
+                                <Text> {messageDate.toLocaleTimeString()}</Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
 
@@ -162,7 +197,9 @@ const styles = StyleSheet.create({
     containerRow: {
         flex: 1,
         flexDirection: 'row',
-        marginBottom: 3
+        marginBottom: 3,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     messageTypeContainer: {
         flexDirection: 'row',
@@ -173,6 +210,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'lightgray',
         paddingVertical: 10,
         paddingHorizontal: 60,
+    },
+    messageTypeButtonFullWidth: {
+        width: '100%',
+        borderRadius: 5,
+        marginBottom: 2,
     },
     messageTypeButtonLeft: {
         borderTopLeftRadius: 10,

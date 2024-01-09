@@ -52,7 +52,7 @@ const MessageFeed = (props: Props) => {
             setMessages(response.data);
             setLoading(false);
         } catch (error) {
-            console.log(error.data)
+            alert(error.response.data);
         }
       };
 
@@ -76,7 +76,7 @@ const MessageFeed = (props: Props) => {
             <View style={{flex: .95}}>
                 <Text style = {styles.title}>Public Messages</Text>
                 <ScrollView style={styles.scrollView} >
-                    {messages.map((message, index) => (
+                    {messages.length == 0 ? <Text>No public messages available.</Text> : messages.map((message, index) => (
                         <View key={index} style={styles.container}>
                             <View style={styles.containerRow}>
                                 <Text style={styles.messageTitle}>{message.title}</Text>

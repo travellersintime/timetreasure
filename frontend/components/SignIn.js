@@ -21,7 +21,7 @@ const SignIn = (props: Props) => {
           await AsyncStorage.setItem('username', username);
           props.navigation.navigate('MessageFeed');
         } catch (error) {
-            alert(error.data);
+            alert(error.response.data);
         }
       };
 

@@ -2,6 +2,7 @@ package com.timetravellers.backend.controllers;
 
 import com.timetravellers.backend.entities.mongodb.Message;
 import com.timetravellers.backend.entities.to.MessageTo;
+import com.timetravellers.backend.exceptions.MessageNotYetAvailableException;
 import com.timetravellers.backend.services.MessageService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,12 @@ public class MessageController {
     @CrossOrigin
     @GetMapping("/messages/id/{id}")
     public ResponseEntity<Message> getById(@PathVariable ObjectId id) {
-        Message message = messageService.findById(id);
+        Message message = null;
+        try {
+            message = messageService.findById(id);
+        } catch (MessageNotYetAvailableException e) {
+            return new ResponseEntity("The current message is not yet available.", HttpStatus.BAD_REQUEST);
+        }
 
         if (message == null) {
             return new ResponseEntity("Message with given ID does not exist.", HttpStatus.BAD_REQUEST);

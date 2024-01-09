@@ -12,13 +12,13 @@ const Footer = (props: Props) => {
     return (
         <View style={{flex: 0.1, flexDirection: 'row', justifyContent: 'space-around', marginTop: 10}}>
             <TouchableOpacity style={styles.bottomBtn} onPress={() => navigation.navigate('MyProfile')}>
-                <FontAwesomeIcon icon={faUser} size="30"/>
+                <FontAwesomeIcon icon={faUser} size={30}/>
             </TouchableOpacity>
             <TouchableOpacity style={styles.bottomBtn} onPress={() => navigation.navigate('MessageFeed')}>
-                <FontAwesomeIcon icon={faHouse} size="30"/>
+                <FontAwesomeIcon icon={faHouse} size={30}/>
             </TouchableOpacity>
             <TouchableOpacity style={styles.bottomBtn} onPress={() => navigation.navigate('CreateTextMessage')}>
-                <FontAwesomeIcon icon={faCirclePlus} size="30"/>
+                <FontAwesomeIcon icon={faCirclePlus} size={30}/>
             </TouchableOpacity>
         </View>
     );

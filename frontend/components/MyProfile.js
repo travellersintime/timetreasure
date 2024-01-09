@@ -54,8 +54,7 @@ const MyProfile = (props: Props) => {
             setMessages(response.data);
             setLoading(false);
         } catch (error) {
-            console.log(error)
-            alert("Message feed")
+            alert(error.response.data);
         }
       };
 

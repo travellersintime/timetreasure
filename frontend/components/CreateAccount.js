@@ -21,7 +21,7 @@ const CreateAccount = (props: Props) => {
           await AsyncStorage.setItem('username', username);
           props.navigation.navigate('MessageFeed');
         } catch (error) {
-            alert(error.response.data);
+            alert("Error", error.response.data);
         }
     };
 

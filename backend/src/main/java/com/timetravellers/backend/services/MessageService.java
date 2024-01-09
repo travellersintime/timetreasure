@@ -4,6 +4,7 @@ import com.timetravellers.backend.entities.mongodb.Message;
 import com.timetravellers.backend.entities.mongodb.Role;
 import com.timetravellers.backend.entities.mongodb.User;
 import com.timetravellers.backend.entities.to.MessageTo;
+import com.timetravellers.backend.exceptions.MessageNotYetAvailableException;
 import com.timetravellers.backend.repositories.MessageRepository;
 import com.timetravellers.backend.validators.MessageValidator;
 import org.bson.types.ObjectId;
@@ -24,29 +25,7 @@ public class MessageService {
     private MessageValidator messageValidator;
 
     public Message insert(MessageTo messageTo) {
-        Message message = new Message(messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient(), messageTo.getIsPublic(), null);
-
-        if (!messageValidator.isValid(message)) {
-            return null;
-        }
-
-        if (messageTo.getMinutes() < 0 || messageTo.getMinutes() >= 60) {
-            return null;
-        }
-
-        if (messageTo.getHours() < 0 || messageTo.getHours() >= 24) {
-            return null;
-        }
-
-        if (messageTo.getDays() < 0) {
-            return null;
-        }
-
-        LocalDateTime localDateTime = LocalDateTime.now();
-        localDateTime = localDateTime.plusMinutes(messageTo.getMinutes());
-        localDateTime = localDateTime.plusHours(messageTo.getHours());
-        localDateTime = localDateTime.plusDays(messageTo.getDays());
-        message.setExpiresOn(localDateTime);
+        Message message = new Message(messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient(), messageTo.getIsPublic(), messageTo.getExpiresOn());
 
         return messageRepository.save(message);
     }
@@ -56,7 +35,7 @@ public class MessageService {
      * @param id
      * @return
      */
-    public Message findById(ObjectId id) {
+    public Message findById(ObjectId id) throws MessageNotYetAvailableException {
         Optional<Message> message = messageRepository.findById(id);
 
         if (message.isEmpty()) {
@@ -67,10 +46,21 @@ public class MessageService {
         var user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (message.get().getIsPublic().equals("true")) {
-            return message.get();
+            if (message.get().getExpiresOn().isAfter(LocalDateTime.now())) {
+                throw new MessageNotYetAvailableException();
+            }
+            else {
+                return message.get();
+            }
         }
+
         else if (user.getUsername().equals(message.get().getAuthor()) || user.getUsername().equals(message.get().getRecipient()) || user.getRole().equals(Role.ADMIN)) {
-            return message.get();
+            if (message.get().getExpiresOn().isAfter(LocalDateTime.now())) {
+                throw new MessageNotYetAvailableException();
+            }
+            else {
+                return message.get();
+            }
         }
 
         return null;
