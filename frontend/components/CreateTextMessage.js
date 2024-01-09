@@ -18,9 +18,11 @@ const CreateTextMessage = (props: Props) => {
     const [messageType, setMessageType] = useState('');
     const [messageTitle, setMessageTitle] = useState('');
     const [messageContent, setMessageContent] = useState('');
-    const [messageDate, setMessageDate] = useState('');
+    const [messageDate, setMessageDate] = useState(new Date());
     const [contentHeight, setContentHeight] = useState(0);
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showDate, setShowDate] = useState(false);
+    const [showTime, setShowTime] = useState(false);
+
 
     const handleTypeChange = (type) => {
         setMessageType(type);
@@ -29,6 +31,15 @@ const CreateTextMessage = (props: Props) => {
     const handleContentSizeChange = (event) => {
         setContentHeight(event.nativeEvent.contentSize.height);
     };
+
+    const handleShowDate = () => {
+        setShowDate(true);
+    }
+
+    
+    const handleShowTime = () => {
+        setShowTime(true);
+    }
 
     const handleSendMessage = async () => {
         try {
@@ -44,9 +55,10 @@ const CreateTextMessage = (props: Props) => {
         }
     };
 
-    const handleDateChange = (date) => {
-        setMessageDate(date);
-        console.log(messageDate);
+    const onChange = (e, selectedDate) => {
+        setShowDate(false);
+        setShowTime(false); 
+        setMessageDate(selectedDate);
     }
 
     useEffect(() => {
@@ -88,19 +100,37 @@ const CreateTextMessage = (props: Props) => {
                 </View>
                 <View style={styles.calendarContainer}>
                     <Text style={styles.calendarText}>When should the message be unlocked?</Text>
-                    <Calendar
-                        onDayPress={(day) => handleDateChange(day)}
-                        markedDates={{
-                            [messageDate]: { selected: true, selectedColor: '#fb5b5a' }
-                        }}
-                    />
+                    <View>
+                        <TouchableOpacity onPress={() => handleShowDate()}>
+                            <Text>{messageDate.toLocaleDateString()}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleShowTime()}>
+                            <Text>{messageDate.toLocaleTimeString()}</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                    <TouchableOpacity onPress={() => openDatePicker()}>
-                        <Text>Pick Date</Text>
-                    </TouchableOpacity>
+                    {
+                        showDate && (
+                            <DateTimePicker
+                                value = {messageDate}
+                                mode = {"date"}
+                                is24Hour = {true}
+                                onChange = {onChange}
+                            />
+                        )
+                    }
+
+                    {
+                        showTime && (
+                            <DateTimePicker
+                                value = {messageDate}
+                                mode = {"time"}
+                                is24Hour = {true}
+                                onChange = {onChange}
+                            />
+                        )
+                    }
                 </View>
-
-                ({showDatePicker == true} ? (<DateTimePicker value={new Date()} />) : <Text>asd</Text>)
             </ScrollView>
             
             <Footer />
@@ -128,6 +158,11 @@ const styles = StyleSheet.create({
     },
     sendButton: {
         paddingVertical: 10
+    },
+    containerRow: {
+        flex: 1,
+        flexDirection: 'row',
+        marginBottom: 3
     },
     messageTypeContainer: {
         flexDirection: 'row',
