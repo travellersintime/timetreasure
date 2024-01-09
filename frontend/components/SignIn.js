@@ -55,7 +55,7 @@ const SignIn = (props: Props) => {
                 <TouchableOpacity onPress={handleForgotPassword} style={styles.bottomBtn}>
                     <Text style={styles.bottomBtnText}>Forgot Password?</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => props.navigation.navigate('CreateTextMessage')} style={styles.bottomBtn}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('CreateAccount')} style={styles.bottomBtn}>
                     <Text style={styles.bottomBtnText}>Create Account</Text>
                 </TouchableOpacity>
             </View>

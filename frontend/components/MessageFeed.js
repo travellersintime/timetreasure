@@ -9,12 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
-import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse'
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
 import { isExpired, convertToDaysHoursMinutesFormat } from '../helpers/DateFunctions';
-
-
-
+import Footer from './Footer';
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -67,56 +63,50 @@ const MessageFeed = (props: Props) => {
     if (loading == true) {
         return (
             <SafeAreaView style={styles.safeAreaView}>
-                <Text>Loading...</Text>
+                <View style={{flex: .95}}>
+                    <Text style = {styles.title}>Message Feed</Text>
+                    <Text>Loading...</Text>
+                </View>
+                <Footer />
             </SafeAreaView>
         );
     }
     return (
         <SafeAreaView style={styles.safeAreaView}>
             <View style={{flex: .95}}>
-            <Text style = {styles.title}>Public Messages</Text>
-            <ScrollView style={styles.scrollView} >
-                {messages.map((message, index) => (
-                    <View key={index} style={styles.container}>
-                        <View style={styles.containerRow}>
-                            <Text style={styles.messageTitle}>{message.title}</Text>
-                        </View>
-                        <View style={styles.containerRow}>
-                            <FontAwesomeIcon icon={faUser} style={{flex: 1, marginRight: 3}}/>
-                            <Text>{message.author}</Text>
-                        </View>
-                        <View style={styles.containerRow}>
-                            <FontAwesomeIcon icon={faClock} style={{flex: 1, marginRight: 3}}/>
-                            <View>
-                                { isExpired(date, message.expiresOn) == true ? <Text>0d 0h 0m</Text> : <Text>{convertToDaysHoursMinutesFormat(date, message.expiresOn)}</Text> }
+                <Text style = {styles.title}>Public Messages</Text>
+                <ScrollView style={styles.scrollView} >
+                    {messages.map((message, index) => (
+                        <View key={index} style={styles.container}>
+                            <View style={styles.containerRow}>
+                                <Text style={styles.messageTitle}>{message.title}</Text>
+                            </View>
+                            <View style={styles.containerRow}>
+                                <FontAwesomeIcon icon={faUser} style={{flex: 1, marginRight: 3}}/>
+                                <Text>{message.author}</Text>
+                            </View>
+                            <View style={styles.containerRow}>
+                                <FontAwesomeIcon icon={faClock} style={{flex: 1, marginRight: 3}}/>
+                                <View>
+                                    { isExpired(date, message.expiresOn) == true ? <Text>0d 0h 0m</Text> : <Text>{convertToDaysHoursMinutesFormat(date, message.expiresOn)}</Text> }
+                                </View>
+                            </View>
+                            <View style={styles.containerRow}>
+                                <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage', {
+                                    messageId: message.id
+                                })}>
+                                    <Text style={styles.controlText}>Open</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage')}>
+                                    <Text style={styles.controlText}>Delete</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                        <View style={styles.containerRow}>
-                            <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage', {
-                                messageId: message.id
-                            })}>
-                                <Text style={styles.controlText}>Open</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage')}>
-                                <Text style={styles.controlText}>Delete</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                ))}
-            </ScrollView>
+                    ))}
+                </ScrollView>
             </View>
             
-            <View style={{flex: 0.05, flexDirection: 'row', justifyContent: 'space-around', marginTop: 10}}>
-                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MyProfile')}>
-                    <FontAwesomeIcon icon={faUser} size="30"/>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MessageFeed')}>
-                    <FontAwesomeIcon icon={faHouse} size="30"/>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MessageFeed')}>
-                    <FontAwesomeIcon icon={faCirclePlus} size="30"/>
-                </TouchableOpacity>
-            </View>
+            <Footer/>
             
         </SafeAreaView>
     )

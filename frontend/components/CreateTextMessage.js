@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet,Text,View,TextInput,TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane'
-import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
-import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse'
-import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
 import { Calendar } from 'react-native-calendars';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Footer from './Footer';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface Props {
     navigation: any;
@@ -23,6 +20,7 @@ const CreateTextMessage = (props: Props) => {
     const [messageContent, setMessageContent] = useState('');
     const [messageDate, setMessageDate] = useState('');
     const [contentHeight, setContentHeight] = useState(0);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const handleTypeChange = (type) => {
         setMessageType(type);
@@ -41,24 +39,34 @@ const CreateTextMessage = (props: Props) => {
                 date: messageDate
             });
         } catch (error) {
+            console.log(error)
             alert(error.response.data);
         }
     };
+
+    const handleDateChange = (date) => {
+        setMessageDate(date);
+        console.log(messageDate);
+    }
+
+    useEffect(() => {
+        setMessageType("private");
+    }, []);
 
     return (
         <View style={styles.container}>
             <ScrollView style={{flex: 1}}>
                 <View style={styles.header}>
                     <Text style={styles.title}>Create a text message</Text>
-                    <TouchableOpacity style={styles.sendButton}>
+                    <TouchableOpacity style={styles.sendButton} onPress={() => handleSendMessage()}>
                         <FontAwesomeIcon icon={faPaperPlane}/>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.messageTypeContainer}>
-                    <TouchableOpacity onPress={() => handleTypeChange('private')} style={[styles.messageTypeButton, messageType === 'private' && styles.selectedType]}>
+                    <TouchableOpacity onPress={() => handleTypeChange('private')} style={[styles.messageTypeButton, styles.messageTypeButtonLeft, messageType === 'private' && styles.selectedType]}>
                         <Text>Private</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleTypeChange('public')} style={[styles.messageTypeButton, messageType === 'public' && styles.selectedType]}>
+                    <TouchableOpacity onPress={() => handleTypeChange('public')} style={[styles.messageTypeButton, styles.messageTypeButtonRight, messageType === 'public' && styles.selectedType]}>
                         <Text>Public</Text>
                     </TouchableOpacity>
                 </View>
@@ -71,7 +79,7 @@ const CreateTextMessage = (props: Props) => {
                 </View>
                 <View style={[styles.inputView, { height: Math.max(100, contentHeight + 20) }]}>
                     <TextInput
-                        style={[styles.inputText, styles.messageContentInput]}
+                        style={styles.inputText}
                         placeholder='Write your message here'
                         onChangeText={text => setMessageContent(text)}
                         multiline
@@ -86,20 +94,16 @@ const CreateTextMessage = (props: Props) => {
                             [messageDate]: { selected: true, selectedColor: '#fb5b5a' }
                         }}
                     />
+
+                    <TouchableOpacity onPress={() => openDatePicker()}>
+                        <Text>Pick Date</Text>
+                    </TouchableOpacity>
                 </View>
+
+                ({showDatePicker == true} ? (<DateTimePicker value={new Date()} />) : <Text>asd</Text>)
             </ScrollView>
             
-            <View style={{flex: 0.1, flexDirection: 'row', justifyContent: 'space-around', marginTop: 10}}>
-                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MyProfile')}>
-                    <FontAwesomeIcon icon={faUser} size="30"/>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MessageFeed')}>
-                    <FontAwesomeIcon icon={faHouse} size="30"/>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.bottomBtn} onPress={() => props.navigation.navigate('MessageFeed')}>
-                    <FontAwesomeIcon icon={faCirclePlus} size="30"/>
-                </TouchableOpacity>
-            </View>
+            <Footer />
             
         </View>
         
@@ -120,7 +124,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize:25,
         color:"#fb5b5a",
-        marginBottom: 20,
+        marginBottom: 0,
     },
     sendButton: {
         paddingVertical: 10
@@ -134,7 +138,14 @@ const styles = StyleSheet.create({
         backgroundColor: 'lightgray',
         paddingVertical: 10,
         paddingHorizontal: 60,
-        borderRadius: 5,
+    },
+    messageTypeButtonLeft: {
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10
+    },
+    messageTypeButtonRight: {
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 10
     },
     selectedType: {
         backgroundColor: '#fb5b5a',
@@ -161,9 +172,7 @@ const styles = StyleSheet.create({
         padding: 20,
         minHeight: 60
     },
-    messageContentInput: {
-        minHeight: 150,
-    },
+
     calendarContainer: {
         marginTop: 20,
     },

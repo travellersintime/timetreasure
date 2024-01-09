@@ -5,14 +5,18 @@ import {
   } from 'react-native-safe-area-context';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
+import Footer from './Footer';
+import { Dimensions } from 'react-native';
 
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 
 interface Props {
     navigation: any;
 }
+
+const screenHeight = Dimensions.get('window').height;
 
 const SingleMessage = (props: Props) => {
     const {messageId} = props.route.params;
@@ -61,29 +65,37 @@ const SingleMessage = (props: Props) => {
     if (loading == true) {
         return (
             <SafeAreaView style={styles.safeAreaView}>
-                <Text>Loading...</Text>
+                <View style={{flex: .95}}>
+                    <Text style = {styles.title}>Message</Text>
+                    <Text>Loading...</Text>
+                </View>
+                <Footer />
             </SafeAreaView>
         );
     }
     return (
         <SafeAreaView style={styles.safeAreaView}>
-            <Text style = {styles.title}>Message</Text>
-            <ScrollView style={styles.scrollView}>
-                    <View>
-                        <View style={styles.row}>
-                            <Text style={styles.messageTitle}>{message.title}</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <FontAwesomeIcon icon={faUser} style={{flex: 1, marginRight: 3}}/>
-                            <Text>{message.author}</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <View style={styles.container}>
-                                <Text style={styles.messageContent}>{message.content}</Text>
+            <View style={{flex: .95}}>
+                <Text style = {styles.title}>Message</Text>
+                <ScrollView style={styles.scrollView}>
+                        <View>
+                            <View style={styles.containerRow}>
+                                <Text style={styles.messageTitle}>{message.title}</Text>
+                            </View>
+                            <View style={styles.containerRow}>
+                                <FontAwesomeIcon icon={faUser} style={{flex: 1, marginRight: 3}}/>
+                                <Text>{message.author}</Text>
+                            </View>
+                            <View>
+                                <View style={styles.container}>
+                                    <Text style={styles.messageContent}>{message.content}</Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
+
+            <Footer />
         </SafeAreaView>
     )
 
@@ -91,33 +103,7 @@ const SingleMessage = (props: Props) => {
 }
 
 const styles=StyleSheet.create({
-        row: {
-            flex: 1,
-            flexDirection: 'row',
-            marginBottom: 3
-        },
-
-        title:{
-            fontWeight: "bold",
-            fontSize:30,
-            color:"#fb5b5a",
-            marginBottom: 20,
-        },
-
-        messageTitle: {
-            fontWeight: "bold",
-            fontSize: 20
-        },
-
-        safeAreaView: {
-            padding: 20
-        },
-
-        scrollView: {
-            marginBottom: 50
-        },
-
-        container: {
+    container: {
             borderStyle: 'solid',
             borderWidth: 1,
             borderColor: '#BABABA',
@@ -127,12 +113,54 @@ const styles=StyleSheet.create({
             flexDirection: 'column',
             marginTop: 15,
             width: '100%'
-        },
-        
-        messageContent: {
-            fontStyle: 'italic',
-            fontSize: 15
-        }
-    });
+    },
+
+    containerRow: {
+        flex: 1,
+        flexDirection: 'row',
+        marginBottom: 3
+    },
+
+    title:{
+        fontWeight: "bold",
+        fontSize:30,
+        color:"#fb5b5a",
+        marginBottom: 20,
+    },
+
+    safeAreaView: {
+        padding: 20,
+        flex: 1
+    },
+
+    scrollView: {
+        marginBottom: 50,
+        maxHeight: {screenHeight}
+    },
+    
+    controlTouchableOpacity: {
+        marginRight: 10
+    },
+
+    controlText: {
+        fontWeight: 'bold',
+        color:"#fb5b5a"
+    },
+
+    bottomBtn: {
+        paddingVertical: 20,
+    },
+
+    messageTitle: {
+        fontWeight: "bold",
+        fontSize: 20
+    },
+    
+    messageContent: {
+        fontStyle: 'italic',
+        fontSize: 15
+    }
+});
+
 
 export default SingleMessage;
