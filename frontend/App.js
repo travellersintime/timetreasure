@@ -5,6 +5,7 @@ import MessageFeed from './components/MessageFeed';
 import SingleMessage from './components/SingleMessage';
 import CreateTextMessage from './components/CreateTextMessage';
 import MyProfile from './components/MyProfile'
+import ResetPassword from './components/ResetPassword'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet } from 'react-native';
@@ -22,6 +23,7 @@ const App =  () => {
         <Stack.Screen name='SingleMessage' component={SingleMessage} options={{animationEnabled: false}}/>
         <Stack.Screen name='CreateTextMessage' component={CreateTextMessage} options={{animationEnabled: false}}/>
         <Stack.Screen name='MyProfile' component={MyProfile} options={{animationEnabled: false}}/>
+        <Stack.Screen name='ResetPassword' component={ResetPassword} options={{animationEnabled: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

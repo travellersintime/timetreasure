@@ -32,7 +32,14 @@ const SignIn = (props: Props) => {
       };
 
       const handleForgotPassword = () => {setShowForgotPasswordModal(true); };
-      const sendVerificationCode = async () => {};
+      const sendVerificationCode = async () => {
+        try{
+            setShowForgotPasswordModal(false);
+            props.navigation.navigate('ResetPassword');
+        }catch (error) {
+            console.error('Error sending verification code:', error);
+        }
+      };
       const updatePassword = async () => {};
 
     return (
