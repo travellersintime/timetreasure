@@ -267,9 +267,6 @@ const styles = StyleSheet.create({
         padding: 15,
         height: 60,
     },
-    bottomBtn: {
-        padding: 20,
-    },
 });
 
 

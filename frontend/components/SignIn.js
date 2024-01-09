@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Modal } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dimensions } from 'react-native';
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons/faCircleXmark'
 
 interface Props {
     navigation: any;
@@ -12,6 +14,10 @@ interface Props {
 const SignIn = (props: Props) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+    const [showNewPasswordModal, setShowNewPasswordModal] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
 
     const handleSignIn = async () => {
         try {
@@ -25,7 +31,9 @@ const SignIn = (props: Props) => {
         }
       };
 
-      const handleForgotPassword = () => {};
+      const handleForgotPassword = () => {setShowForgotPasswordModal(true); };
+      const sendVerificationCode = async () => {};
+      const updatePassword = async () => {};
 
     return (
         <View style={styles.container}>
@@ -59,6 +67,25 @@ const SignIn = (props: Props) => {
                     <Text style={styles.bottomBtnText}>Create Account</Text>
                 </TouchableOpacity>
             </View>
+            
+            <Modal visible={showForgotPasswordModal} transparent={true} animationType="slide">
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <TouchableOpacity onPress={() => setShowForgotPasswordModal(false)} style={styles.closeBtn}>
+                            <FontAwesomeIcon icon={faCircleXmark}/>
+                        </TouchableOpacity>
+                        <View style={styles.modalText}>
+                            <TextInput style={styles.rstText} placeholder="Enter your email to reset password" placeholderTextColor="gray" onChangeText={text => setEmail(text)}/>
+                        </View>
+                        <TouchableOpacity onPress={sendVerificationCode} style={styles.resetBtn}>
+                            <Text style={{color: 'white'}}>Send Verification Code</Text>
+                        </TouchableOpacity>
+                        
+                        {/* Error message if email doesn't exist */}
+                        {/* ... */}
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -131,6 +158,46 @@ const styles = StyleSheet.create({
         width: win.width/1.25,
         paddingTop: 200,
         resizeMode: 'contain'
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        width: '80%',
+        padding: 20,
+        borderRadius: 10,
+    },
+    emailText: {
+        color: 'black',
+        fontSize: 20,
+    },
+    modalText: {
+        borderRadius: 10,
+        borderBlockColor: 'black',
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+    },
+    rstText: {
+        flex: 1,
+        color:'black',
+        paddingHorizontal: 10,
+        paddingVertical: 5
+    },
+    resetBtn: {
+        width:"80%",
+        backgroundColor:"#fb5b5a",
+        borderRadius:25,
+        height:40,
+        alignItems:"center",
+        justifyContent:"center",
+        marginTop:20,
+        marginBottom:10,
+        marginLeft: 27
     }
 
 });
