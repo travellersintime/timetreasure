@@ -203,8 +203,9 @@ const styles = StyleSheet.create({
     },
     messageTypeContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         marginBottom: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     messageTypeButton: {
         backgroundColor: 'lightgray',

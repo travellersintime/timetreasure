@@ -21,7 +21,7 @@ const Footer = (props: Props) => {
     };
 
     return (
-        <View style={{flex: 0.1, flexDirection: 'row', justifyContent: 'space-around', marginTop: 10}}>
+        <View style={{ flex: 0.1, flexDirection: 'row', justifyContent: 'space-around', marginTop: 10 }}>
             <TouchableOpacity style={styles.bottomBtn} onPress={() => handleIconClick('MyProfile')}>
                 <FontAwesomeIcon icon={faUser} size={30} color={activeRoute === 'MyProfile' ? '#fb5b5a' : null}/>
             </TouchableOpacity>

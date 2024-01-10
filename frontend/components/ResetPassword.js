@@ -11,7 +11,7 @@ interface Props {
 
 const ResetPassword = (props: Props) => {
     const navigation = useNavigation();
-    const [username, setUsername] = useState('');
+    const [resetCode, setResetCode] = useState('');
     const [password, setPassword] = useState('');
 
     const handleCreateAccount = async () => {
@@ -31,8 +31,8 @@ const ResetPassword = (props: Props) => {
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.inputText}
-                    placeholder='New Password'
-                    onChangeText={text => setPassword(text)}/>
+                    placeholder='Verification code'
+                    onChangeText={text => setResetCode(text)}/>
             </View>
             <View style={styles.inputView}>
                 <TextInput
