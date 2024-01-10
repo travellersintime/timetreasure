@@ -26,6 +26,34 @@ const MyProfile = (props: Props) => {
     const [loading, setLoading] = useState(true);
     const date = new Date();
 
+    const handleDeleteMessage = async (messageId) => {
+        const token = await AsyncStorage.getItem("token");
+
+        const authorizationHeader = 'Bearer ' + token;
+
+        try {
+            const response = 
+                await axios.delete (
+                    "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/delete/" + messageId, 
+                    {
+                        headers: {
+                            'Authorization': authorizationHeader, 
+                            'Content-type': 'application/x-www-form-urlencoded', 
+                            'Accept': 'Application/json',
+                        },
+                        data:undefined
+                    }
+                )
+            
+            if (response.status == 200) {
+                fetchMessages();
+            }
+        }
+        catch (error) {
+            alert(error.response.data);
+        }
+    }
+
     const fetchMessages = async () => {
         try {
             const token = await AsyncStorage.getItem("token");
@@ -98,7 +126,7 @@ const MyProfile = (props: Props) => {
                                 })}>
                                     <Text style={styles.controlText}>Open</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage')}>
+                                <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => handleDeleteMessage(message.id)}>
                                     <Text style={styles.controlText}>Delete</Text>
                                 </TouchableOpacity>
                             </View>

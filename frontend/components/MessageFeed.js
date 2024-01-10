@@ -97,9 +97,6 @@ const MessageFeed = (props: Props) => {
                                 })}>
                                     <Text style={styles.controlText}>Open</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage')}>
-                                    <Text style={styles.controlText}>Delete</Text>
-                                </TouchableOpacity>
                             </View>
                         </View>
                     ))}
