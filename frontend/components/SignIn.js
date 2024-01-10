@@ -75,14 +75,14 @@ const SignIn = (props: Props) => {
                 </TouchableOpacity>
             </View>
             
-            <Modal visible={showForgotPasswordModal} transparent={true} animationType="slide">
+            <Modal visible={showForgotPasswordModal} transparent={true} animationType="fade">
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <TouchableOpacity onPress={() => setShowForgotPasswordModal(false)} style={styles.closeBtn}>
                             <FontAwesomeIcon icon={faCircleXmark}/>
                         </TouchableOpacity>
                         <View style={styles.modalText}>
-                            <TextInput style={styles.rstText} placeholder="Enter your email to reset password" placeholderTextColor="gray" onChangeText={text => setEmail(text)}/>
+                            <TextInput style={styles.rstText} placeholder="Enter your email address" placeholderTextColor="gray" onChangeText={text => setEmail(text)}/>
                         </View>
                         <TouchableOpacity onPress={sendVerificationCode} style={styles.resetBtn}>
                             <Text style={{color: 'white'}}>Send Verification Code</Text>

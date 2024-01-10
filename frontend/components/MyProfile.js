@@ -32,7 +32,6 @@ const MyProfile = (props: Props) => {
             const username = await AsyncStorage.getItem("username");
 
             const authorizationHeader = 'Bearer ' + token;
-            console.log(authorizationHeader);
 
             const response = 
                 await axios.get (

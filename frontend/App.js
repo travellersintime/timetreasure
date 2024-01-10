@@ -9,12 +9,14 @@ import ResetPassword from './components/ResetPassword'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet } from 'react-native';
+import { ActiveRouteProvider } from './components/ActiveRouteContext'; // adjust the path as needed
 
 
 const Stack = createStackNavigator();
 
 const App =  () => {
   return (
+    <ActiveRouteProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName='SignIn' screenOptions={{headerShown: false}}>
         <Stack.Screen name='SignIn' component={SignIn} options={{animationEnabled: false}}/>
@@ -26,6 +28,7 @@ const App =  () => {
         <Stack.Screen name='ResetPassword' component={ResetPassword} options={{animationEnabled: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
+    </ActiveRouteProvider>
   );
 }
 
