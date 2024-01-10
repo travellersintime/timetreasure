@@ -1,4 +1,4 @@
 package com.timetravellers.backend.exceptions;
 
-public class MessageDoesNotExistException extends Exception {
+public class InsufficientPermissionsException extends Exception {
 }

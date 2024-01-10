@@ -1,4 +1,4 @@
 package com.timetravellers.backend.exceptions;
 
-public class InvalidEmailException extends Exception {
+public class MessageDoesNotExistException extends Exception {
 }

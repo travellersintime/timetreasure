@@ -10,6 +10,7 @@ import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
 import Footer from './Footer';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useActiveRoute } from './ActiveRouteContext';
 
 interface Props {
     navigation: any;
@@ -25,6 +26,7 @@ const CreateTextMessage = (props: Props) => {
     const [messageRecipient, setMessageRecipient] = useState('');
     const [showDate, setShowDate] = useState(false);
     const [showTime, setShowTime] = useState(false);
+    const { activeRoute, setActiveRoute } = useActiveRoute();
 
 
     const handleTypeChange = (type) => {
@@ -65,6 +67,7 @@ const CreateTextMessage = (props: Props) => {
             });
 
             alert("Message sent successfully.");
+            setActiveRoute("MessageFeed");
             navigation.navigate('MessageFeed');
         } catch (error) {
             alert(error.response.data);

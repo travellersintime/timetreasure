@@ -4,6 +4,8 @@ import com.timetravellers.backend.entities.mongodb.Message;
 import com.timetravellers.backend.entities.mongodb.Role;
 import com.timetravellers.backend.entities.mongodb.User;
 import com.timetravellers.backend.entities.to.MessageTo;
+import com.timetravellers.backend.exceptions.InsufficientPermissionsException;
+import com.timetravellers.backend.exceptions.MessageDoesNotExistException;
 import com.timetravellers.backend.exceptions.MessageNotYetAvailableException;
 import com.timetravellers.backend.repositories.MessageRepository;
 import com.timetravellers.backend.validators.MessageValidator;
@@ -82,5 +84,25 @@ public class MessageService {
         List<Message> messageList = messageRepository.findByIsPublic(isPublic);
 
         return messageList;
+    }
+
+    public void deleteById(ObjectId id) throws MessageDoesNotExistException, InsufficientPermissionsException {
+        Optional<Message> message = messageRepository.findById(id);
+
+        if (message.isEmpty()) {
+            throw new MessageDoesNotExistException();
+        }
+
+        var user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!message.get().getRecipient().equals(user.getUsername()) && !user.getRole().equals(Role.ADMIN)) {
+            throw new InsufficientPermissionsException();
+        }
+
+        messageRepository.deleteById(id);
+    }
+
+    public void requestForgotPasswordEmail() {
+
     }
 }
