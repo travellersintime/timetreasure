@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
 import Footer from './Footer';
 import { Dimensions } from 'react-native';
+import { useActiveRoute } from './ActiveRouteContext';
 
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 
@@ -22,6 +23,7 @@ const SingleMessage = (props: Props) => {
     const {messageId} = props.route.params;
     const [message, setMessage] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { activeRoute, setActiveRoute } = useActiveRoute();
 
     const fetchMessage = async () => {
         try {
@@ -51,10 +53,12 @@ const SingleMessage = (props: Props) => {
 
             else {
                 alert("There was a problem trying to get your message.");
+                setActiveRoute("MessageFeed");
                 props.navigation.navigate('MessageFeed');
             }
         } catch (error) {
-            alert("Error", error.response.data);
+            alert(error.response.data);
+            setActiveRoute("MessageFeed");
             props.navigation.navigate('MessageFeed');
         }
       };
