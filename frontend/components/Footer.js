@@ -13,23 +13,23 @@ const Footer = (props: Props) => {
     const navigation = useNavigation();
 
     useEffect(() => {
-        navigation.navigate(activeRoute);
+        navigation.navigate(activeRoute.route);
     }, [activeRoute, navigation]);
 
     const handleIconClick = (routeName) => {
-        setActiveRoute(routeName);
+        setActiveRoute(routeName, {});
     };
 
     return (
         <View style={{ flex: 0.1, flexDirection: 'row', justifyContent: 'space-around', marginTop: 10 }}>
             <TouchableOpacity style={styles.bottomBtn} onPress={() => handleIconClick('MyProfile')}>
-                <FontAwesomeIcon icon={faUser} size={30} color={activeRoute === 'MyProfile' ? '#fb5b5a' : null}/>
+                <FontAwesomeIcon icon={faUser} size={30} color={activeRoute.route === 'MyProfile' ? '#fb5b5a' : null}/>
             </TouchableOpacity>
             <TouchableOpacity style={styles.bottomBtn} onPress={() => handleIconClick('MessageFeed')}>
-                <FontAwesomeIcon icon={faHouse} size={30} color={activeRoute === 'MessageFeed' ? '#fb5b5a' : null}/>
+                <FontAwesomeIcon icon={faHouse} size={30} color={activeRoute.route === 'MessageFeed' ? '#fb5b5a' : null}/>
             </TouchableOpacity>
             <TouchableOpacity style={styles.bottomBtn} onPress={() => handleIconClick('CreateTextMessage')}>
-                <FontAwesomeIcon icon={faCirclePlus} size={30} color={activeRoute === 'CreateTextMessage' ? '#fb5b5a' : null}/>
+                <FontAwesomeIcon icon={faCirclePlus} size={30} color={activeRoute.route === 'CreateTextMessage' ? '#fb5b5a' : null}/>
             </TouchableOpacity>
         </View>
     );

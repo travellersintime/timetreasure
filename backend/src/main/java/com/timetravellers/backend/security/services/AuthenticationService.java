@@ -4,10 +4,7 @@ import com.timetravellers.backend.entities.mongodb.Role;
 import com.timetravellers.backend.entities.mongodb.User;
 import com.timetravellers.backend.entities.to.AuthRequestTo;
 import com.timetravellers.backend.entities.to.AuthResponseTo;
-import com.timetravellers.backend.exceptions.InvalidEmailException;
-import com.timetravellers.backend.exceptions.InvalidPasswordException;
-import com.timetravellers.backend.exceptions.UserAlreadyExistsException;
-import com.timetravellers.backend.exceptions.UserDoesNotExistException;
+import com.timetravellers.backend.exceptions.authentication.*;
 import com.timetravellers.backend.repositories.UserRepository;
 import com.timetravellers.backend.validators.EmailValidator;
 import com.timetravellers.backend.validators.PasswordValidator;
@@ -39,7 +36,15 @@ public class AuthenticationService {
      * @param authRequestTo
      * @return
      */
-    public AuthResponseTo register(AuthRequestTo authRequestTo) throws UserAlreadyExistsException, InvalidEmailException, InvalidPasswordException {
+    public AuthResponseTo register(AuthRequestTo authRequestTo) throws UserAlreadyExistsException, InvalidEmailException, InvalidPasswordException, UsernameCannotBeEmptyException, PasswordCannotBeEmptyException {
+        if (authRequestTo.getUsername().isEmpty()) {
+            throw new UsernameCannotBeEmptyException();
+        }
+
+        if (authRequestTo.getPassword().isEmpty()) {
+            throw new PasswordCannotBeEmptyException();
+        }
+
         Optional<User> userOptional = userRepository.findByUsername(authRequestTo.getUsername());
 
         // Check if the E-Mail (expressed as Username) is valid

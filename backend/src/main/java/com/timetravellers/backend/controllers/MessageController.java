@@ -2,12 +2,8 @@ package com.timetravellers.backend.controllers;
 
 import com.timetravellers.backend.entities.mongodb.Message;
 import com.timetravellers.backend.entities.to.MessageTo;
-import com.timetravellers.backend.exceptions.InsufficientPermissionsException;
-import com.timetravellers.backend.exceptions.MessageDoesNotExistException;
-import com.timetravellers.backend.exceptions.MessageNotYetAvailableException;
-import com.timetravellers.backend.services.EmailService;
+import com.timetravellers.backend.exceptions.messages.*;
 import com.timetravellers.backend.services.MessageService;
-import org.apache.coyote.Response;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,14 +16,21 @@ import java.util.List;
 public class MessageController {
     @Autowired
     private MessageService messageService;
-    @Autowired
-    private EmailService emailService;
 
     @CrossOrigin
     @PostMapping("/messages")
     public ResponseEntity<Message> createMessage(@RequestBody MessageTo messageTo) {
 
-        Message message = messageService.insert(messageTo);
+        Message message = null;
+        try {
+            message = messageService.insert(messageTo);
+        } catch (MessageRecipientCannotBeEmptyException e) {
+            return new ResponseEntity("Message recipient cannot be empty.", HttpStatus.BAD_REQUEST);
+        } catch (MessageTitleCannotBeEmptyException e) {
+            return new ResponseEntity("Message title cannot be empty.", HttpStatus.BAD_REQUEST);
+        } catch (MessageContentCannotBeEmptyException e) {
+            return new ResponseEntity("Message content cannot be empty.", HttpStatus.BAD_REQUEST);
+        }
 
         if (message == null) {
             return new ResponseEntity("There was an error while creating the message.", HttpStatus.BAD_REQUEST);

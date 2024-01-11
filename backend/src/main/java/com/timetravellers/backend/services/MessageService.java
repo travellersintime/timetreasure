@@ -4,9 +4,7 @@ import com.timetravellers.backend.entities.mongodb.Message;
 import com.timetravellers.backend.entities.mongodb.Role;
 import com.timetravellers.backend.entities.mongodb.User;
 import com.timetravellers.backend.entities.to.MessageTo;
-import com.timetravellers.backend.exceptions.InsufficientPermissionsException;
-import com.timetravellers.backend.exceptions.MessageDoesNotExistException;
-import com.timetravellers.backend.exceptions.MessageNotYetAvailableException;
+import com.timetravellers.backend.exceptions.messages.*;
 import com.timetravellers.backend.repositories.MessageRepository;
 import com.timetravellers.backend.validators.MessageValidator;
 import org.bson.types.ObjectId;
@@ -26,7 +24,19 @@ public class MessageService {
     @Autowired
     private MessageValidator messageValidator;
 
-    public Message insert(MessageTo messageTo) {
+    public Message insert(MessageTo messageTo) throws MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException {
+        if (messageTo.getIsPublic().equals("false") && messageTo.getRecipient().isEmpty()) {
+            throw new MessageRecipientCannotBeEmptyException();
+        }
+
+        if (messageTo.getTitle().isEmpty()) {
+            throw new MessageTitleCannotBeEmptyException();
+        }
+
+        if (messageTo.getContent().isEmpty()) {
+            throw new MessageContentCannotBeEmptyException();
+        }
+
         Message message = new Message(messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient(), messageTo.getIsPublic(), messageTo.getExpiresOn());
 
         return messageRepository.save(message);

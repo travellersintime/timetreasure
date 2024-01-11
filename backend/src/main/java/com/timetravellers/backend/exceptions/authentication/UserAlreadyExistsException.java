@@ -1,4 +1,4 @@
-package com.timetravellers.backend.exceptions;
+package com.timetravellers.backend.exceptions.authentication;
 
 public class UserAlreadyExistsException extends Exception {
 }

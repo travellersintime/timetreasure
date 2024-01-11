@@ -20,7 +20,6 @@ interface Props {
 const screenHeight = Dimensions.get('window').height;
 
 const SingleMessage = (props: Props) => {
-    const {messageId} = props.route.params;
     const [message, setMessage] = useState([]);
     const [loading, setLoading] = useState(true);
     const { activeRoute, setActiveRoute } = useActiveRoute();
@@ -30,12 +29,10 @@ const SingleMessage = (props: Props) => {
             const token = await AsyncStorage.getItem("token");
 
             const authorizationHeader = 'Bearer ' + token;
-            console.log(authorizationHeader);
-            console.log(messageId);
 
             const response = 
                 await axios.get (
-                    "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/id/" + messageId, 
+                    "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/id/" + activeRoute.params.messageId, 
                     {
                         headers: {
                             'Authorization': authorizationHeader, 
@@ -45,21 +42,20 @@ const SingleMessage = (props: Props) => {
                         data:undefined
                     }
                 )
-            
+
             if (response.status == 200) {
                 setMessage(response.data);
                 setLoading(false);
             }
-
             else {
                 alert("There was a problem trying to get your message.");
-                setActiveRoute("MessageFeed");
                 props.navigation.navigate('MessageFeed');
+                setActiveRoute("MessageFeed", {});
             }
         } catch (error) {
             alert(error.response.data);
-            setActiveRoute("MessageFeed");
             props.navigation.navigate('MessageFeed');
+            setActiveRoute("MessageFeed", {});
         }
       };
 

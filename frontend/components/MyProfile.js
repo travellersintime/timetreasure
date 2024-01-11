@@ -11,6 +11,7 @@ import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
 import { isExpired, convertToDaysHoursMinutesFormat } from '../helpers/DateFunctions';
 import Footer from './Footer';
 import { Dimensions } from 'react-native';
+import { useActiveRoute } from './ActiveRouteContext';
 
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -24,6 +25,7 @@ const screenHeight = Dimensions.get('window').height;
 const MyProfile = (props: Props) => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { activeRoute, setActiveRoute } = useActiveRoute();
     const date = new Date();
 
     const handleDeleteMessage = async (messageId) => {
@@ -85,6 +87,10 @@ const MyProfile = (props: Props) => {
         }
       };
 
+      const handleMessageClick = (id) => {
+        setActiveRoute("SingleMessage", {messageId: id});
+      }
+
       useEffect(() => {
         fetchMessages();
       }, []);
@@ -121,9 +127,7 @@ const MyProfile = (props: Props) => {
                                 </View>
                             </View>
                             <View style={styles.containerRow}>
-                                <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => props.navigation.navigate('SingleMessage', {
-                                    messageId: message.id
-                                })}>
+                                <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => handleMessageClick(message.id)}>
                                     <Text style={styles.controlText}>Open</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.controlTouchableOpacity} onPress={() => handleDeleteMessage(message.id)}>

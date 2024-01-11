@@ -67,7 +67,7 @@ const CreateTextMessage = (props: Props) => {
             });
 
             alert("Message sent successfully.");
-            setActiveRoute("MessageFeed");
+            setActiveRoute("MessageFeed", {});
             navigation.navigate('MessageFeed');
         } catch (error) {
             alert(error.response.data);
