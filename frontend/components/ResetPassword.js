@@ -11,19 +11,28 @@ interface Props {
 
 const ResetPassword = (props: Props) => {
     const navigation = useNavigation();
-    const [resetCode, setResetCode] = useState('');
+
+    const [verificationCode, setVerificationCode] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleCreateAccount = async () => {
+    const handleUpdatePassword = async () => {
         try {
-          const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/register", {username, password})
-          await AsyncStorage.setItem('token', response.data.token);
-          await AsyncStorage.setItem('username', username);
-          props.navigation.navigate('MessageFeed');
-        } catch (error) {
-            alert("Error", error.response.data);
-        }
-    };
+            const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/resetPassword", {code: verificationCode, newPassword: password});
+  
+            if (response.status == 200) {
+              alert("Password has been successfully updated.");
+              props.navigation.navigate('SignIn');
+            }
+          } catch (error) {
+            console.log(error)
+              if (error.response.data == "") {
+                  alert("Unknown error. It might be from the server. Please try again later.");
+              }
+              else {
+                  alert(error.response.data);
+              }
+          }
+    }
 
     return (
         <View style={styles.container}>
@@ -32,7 +41,7 @@ const ResetPassword = (props: Props) => {
                 <TextInput
                     style={styles.inputText}
                     placeholder='Verification code'
-                    onChangeText={text => setResetCode(text)}/>
+                    onChangeText= {text => setVerificationCode(text)}/>
             </View>
             <View style={styles.inputView}>
                 <TextInput
@@ -42,13 +51,13 @@ const ResetPassword = (props: Props) => {
                     onChangeText={text => setPassword(text)}/>
             </View>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={handleCreateAccount} style={styles.continueBtn}>
+                <TouchableOpacity onPress={() => handleUpdatePassword()} style={styles.continueBtn}>
                     <Text style={styles.continueText}>Reset password</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.signInContainer}>
                 <Text style={styles.questionText}>Want to go back to Sign In?</Text>
-                <TouchableOpacity onPress={()=> navigation.navigate('SignIn')}>
+                <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
                     <Text style={styles.signInText}> Click Here!</Text>
                 </TouchableOpacity>
             </View>

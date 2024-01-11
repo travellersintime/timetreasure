@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import SignIn from './components/SignIn';
 import CreateAccount from './components/CreateAccount'
 import MessageFeed from './components/MessageFeed';
@@ -9,12 +9,25 @@ import ResetPassword from './components/ResetPassword'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet } from 'react-native';
-import { ActiveRouteProvider } from './components/ActiveRouteContext'; // adjust the path as needed
+import { ActiveRouteProvider } from './components/ActiveRouteContext';
+import { BackHandler } from 'react-native';
 
 
 const Stack = createStackNavigator();
 
 const App =  () => {
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        () => {
+            return true;
+        }
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+
   return (
     <ActiveRouteProvider>
     <NavigationContainer>

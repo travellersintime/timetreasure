@@ -6,6 +6,7 @@ import { Dimensions } from 'react-native';
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons/faCircleXmark'
+import { CommonActions } from '@react-navigation/native';
 
 interface Props {
     navigation: any;
@@ -14,32 +15,47 @@ interface Props {
 const SignIn = (props: Props) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
     const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
-    const [showNewPasswordModal, setShowNewPasswordModal] = useState(false);
-    const [newPassword, setNewPassword] = useState('');
 
     const handleSignIn = async () => {
         try {
           const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/login", {username, password})
           await AsyncStorage.setItem('token', response.data.token);
           await AsyncStorage.setItem('username', username);
-          props.navigation.navigate("MessageFeed");
+          props.navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: "MessageFeed"}]}));
+
         } catch (error) {
-            alert(error.response.data);
+            if (error.response.data == undefined || error.response.data == "") {
+                alert("Could not sign you in. Please make sure that the credentials are correct.");
+            }
+            else {
+                alert(error.response.data);
+            }
         }
       };
 
       const handleForgotPassword = () => {setShowForgotPasswordModal(true); };
-      const sendVerificationCode = async () => {
-        try{
+
+      const navigateToResetPassword = async () => {
+        try {
+          const response = await axios.get("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/forgotPassword/" + emailAddress);
+
+          if (response.status == 200) {
+            alert("A password recovery code has been sent to you. Please check your e-mail.");
             setShowForgotPasswordModal(false);
-            props.navigation.navigate('ResetPassword');
-        }catch (error) {
-            console.error('Error sending verification code:', error);
+            props.navigation.navigate('ResetPassword', {username: emailAddress});
+          }
+        } catch (error) {
+            if (error.response.data == "") {
+                alert("Unknown error encountered while trying to process your e-mail address.");
+            }
+            else {
+                alert(error.response.data);
+            }
         }
-      };
-      const updatePassword = async () => {};
+
+    };
 
     return (
         <View style={styles.container}>
@@ -81,14 +97,11 @@ const SignIn = (props: Props) => {
                             <FontAwesomeIcon icon={faCircleXmark}/>
                         </TouchableOpacity>
                         <View style={styles.modalText}>
-                            <TextInput style={styles.rstText} placeholder="Enter your email address" placeholderTextColor="gray" onChangeText={text => setEmail(text)}/>
+                            <TextInput style={styles.rstText} placeholder="Enter your email address" placeholderTextColor="gray" onChangeText={text => setEmailAddress(text)}/>
                         </View>
-                        <TouchableOpacity onPress={sendVerificationCode} style={styles.resetBtn}>
+                        <TouchableOpacity onPress={() => navigateToResetPassword(emailAddress)} style={styles.resetBtn}>
                             <Text style={{color: 'white'}}>Send Verification Code</Text>
                         </TouchableOpacity>
-                        
-                        {/* Error message if email doesn't exist */}
-                        {/* ... */}
                     </View>
                 </View>
             </Modal>

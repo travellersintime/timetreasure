@@ -11,5 +11,6 @@ import java.util.Optional;
 @Repository
 public interface PwResetRepository extends MongoRepository<PwReset, ObjectId> {
     Optional<PwReset> findByUsername(String username);
+    Optional<PwReset> findByCode(String code);
     void deleteByUsername(String username);
 }

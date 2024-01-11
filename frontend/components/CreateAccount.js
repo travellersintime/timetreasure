@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
 
 interface Props {
     navigation: any;
@@ -19,9 +20,9 @@ const CreateAccount = (props: Props) => {
           const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/register", {username, password})
           await AsyncStorage.setItem('token', response.data.token);
           await AsyncStorage.setItem('username', username);
-          props.navigation.navigate('MessageFeed');
+          props.navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: "MessageFeed"}]}));
         } catch (error) {
-            alert("Error", error.response.data);
+            alert(error.response.data);
         }
     };
 

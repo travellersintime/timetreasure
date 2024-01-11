@@ -2,9 +2,11 @@ package com.timetravellers.backend.controllers;
 
 import com.timetravellers.backend.entities.to.AuthRequestTo;
 import com.timetravellers.backend.entities.to.AuthResponseTo;
+import com.timetravellers.backend.entities.to.PwResetTo;
 import com.timetravellers.backend.exceptions.authentication.*;
 import com.timetravellers.backend.security.services.AuthenticationService;
 import com.timetravellers.backend.services.PwResetService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,11 +61,29 @@ public class AuthenticationController {
     @GetMapping("/auth/forgotPassword/{username}")
     public ResponseEntity forgotPassword(@PathVariable String username) {
         try {
-            pwResetService.resetPassword(username);
+            pwResetService.requestPasswordReset(username);
         } catch (UsernameCannotBeEmptyException e) {
             return new ResponseEntity("E-mail cannot be empty.", HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity("Please check your mail for the password reset code we sent to you.", HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping("/auth/resetPassword")
+    public ResponseEntity resetPassword(@RequestBody PwResetTo pwResetTo) {
+        try {
+            pwResetService.resetPassword(pwResetTo);
+        } catch (CodeNotSentException e) {
+            return new ResponseEntity("Code has not been sent.", HttpStatus.BAD_REQUEST);
+        } catch (InvalidCodeException e) {
+            return new ResponseEntity("Specified code is invalid.", HttpStatus.BAD_REQUEST);
+        } catch (InvalidPasswordException e) {
+            return new ResponseEntity("Provided password needs to have a minimum length of 8.", HttpStatus.BAD_REQUEST);
+        } catch (UserDoesNotExistException e) {
+            return new ResponseEntity("User with generate code does not exist anymore.", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity("Password has been successfully reset.", HttpStatus.OK);
     }
 }
