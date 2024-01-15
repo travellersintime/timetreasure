@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet,Text,View,TextInput,TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet,Text,View,TextInput,TouchableOpacity, ScrollView, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import axios from 'axios';
@@ -7,10 +7,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons/faCalendar'
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
+import { faCamera } from '@fortawesome/free-solid-svg-icons/faCamera';
 import Footer from './Footer';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useActiveRoute } from './ActiveRouteContext';
+import * as ImagePicker from 'expo-image-picker';
 
 interface Props {
     navigation: any;
@@ -18,7 +20,7 @@ interface Props {
 
 const CreateTextMessage = (props: Props) => {
     const navigation = useNavigation();
-    const [messageType, setMessageType] = useState('');
+    const [messageVisibility, setMessageVisibility] = useState('');
     const [messageTitle, setMessageTitle] = useState('');
     const [messageContent, setMessageContent] = useState('');
     const [messageDate, setMessageDate] = useState(new Date());
@@ -26,8 +28,29 @@ const CreateTextMessage = (props: Props) => {
     const [messageRecipient, setMessageRecipient] = useState('');
     const [showDate, setShowDate] = useState(false);
     const [showTime, setShowTime] = useState(false);
+    const [messageType, setMessageType] = useState('');
     const { activeRoute, setActiveRoute } = useActiveRoute();
+    const [photo, setPhoto] = useState(null);
 
+    const openCamera = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if(permissionResult.granted === false) {
+            alert('Camera permission is required to take a photo');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync();
+
+        if(!result.canceled) {
+            setPhoto(result.uri);
+        }
+    };
+    
+
+    const handleVisibilityChange = (visibility) => {
+        setMessageVisibility(visibility);
+    };
 
     const handleTypeChange = (type) => {
         setMessageType(type);
@@ -39,12 +62,12 @@ const CreateTextMessage = (props: Props) => {
 
     const handleShowDate = () => {
         setShowDate(true);
-    }
+    };
 
     
     const handleShowTime = () => {
         setShowTime(true);
-    }
+    };
 
     const handleSendMessage = async () => {
         try {
@@ -58,7 +81,7 @@ const CreateTextMessage = (props: Props) => {
                 content: messageContent,
                 author: username,
                 recipient: messageRecipient,
-                isPublic: messageType === "private" ? "false" : "true",
+                isPublic: messageVisibility === "private" ? "false" : "true",
                 expiresOn: new Date(messageDate.getTime() + 7200 * 1000)
             }, {
                 headers: {
@@ -81,7 +104,7 @@ const CreateTextMessage = (props: Props) => {
     }
 
     useEffect(() => {
-        setMessageType("private");
+        setMessageVisibility("private");
     }, []);
 
     return (
@@ -93,24 +116,32 @@ const CreateTextMessage = (props: Props) => {
                         <FontAwesomeIcon icon={faPaperPlane}/>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.messageTypeContainer}>
-                    <TouchableOpacity onPress={() => handleTypeChange('private')} style={[styles.messageTypeButton, styles.messageTypeButtonLeft, messageType === 'private' && styles.selectedType]}>
+                <View style={styles.messageVisibilityContainer}>
+                    <TouchableOpacity onPress={() => handleVisibilityChange('private')} style={[styles.messageVisibilityButton, styles.messageVisibilityButtonLeft, messageVisibility === 'private' && styles.selectedVisibility]}>
                         <Text>Private</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleTypeChange('public')} style={[styles.messageTypeButton, styles.messageTypeButtonRight, messageType === 'public' && styles.selectedType]}>
+                    <TouchableOpacity onPress={() => handleVisibilityChange('public')} style={[styles.messageVisibilityButton, styles.messageVisibilityButtonRight, messageVisibility === 'public' && styles.selectedVisibility]}>
                         <Text>Public</Text>
                     </TouchableOpacity>
                 </View>
+                <View style={styles.messageTypeContainer}>
+                    <TouchableOpacity onPress={() => handleTypeChange('photo')} style={[styles.messageTypeButton, styles.messageTypeButtonLeft, messageType === 'photo' && styles.selectedType]}>
+                        <Text>Photo</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleTypeChange('text')} style={[styles.messageTypeButton, styles.messageTypeButtonRight, messageType === 'text' && styles.selectedType]}>
+                        <Text>Text</Text>
+                    </TouchableOpacity>
+                </View>
                 {
-                    messageType === "private" &&
+                    messageVisibility === "private" &&
                     (
                         <View style={styles.inputTitle}>
-                        <TextInput
-                            style={styles.inputText}
-                            placeholder='Type the destination E-Mail address'
-                            onChangeText={text => setMessageRecipient(text)}
-                        />
-                    </View>
+                            <TextInput
+                                style={styles.inputText}
+                                placeholder='Type the destination E-Mail address'
+                                onChangeText={text => setMessageRecipient(text)}
+                            />
+                        </View>
                     )
                 }
                 <View style={styles.inputTitle}>
@@ -120,26 +151,47 @@ const CreateTextMessage = (props: Props) => {
                         onChangeText={text => setMessageTitle(text)}
                     />
                 </View>
-                <View style={[styles.inputView, { height: Math.max(100, contentHeight + 20) }]}>
-                    <TextInput
-                        style={styles.inputText}
-                        placeholder='Write your message here'
-                        onChangeText={text => setMessageContent(text)}
-                        multiline
-                        onContentSizeChange={handleContentSizeChange}
-                    />
-                </View>
+                {
+                    messageType === 'text' &&
+                    (
+                        <View style={[styles.inputView, { height: Math.max(100, contentHeight + 20) }]}>
+                            <TextInput
+                                style={styles.inputText}
+                                placeholder='Write your message here'
+                                onChangeText={text => setMessageContent(text)}
+                                multiline
+                                onContentSizeChange={handleContentSizeChange}
+                            />
+                        </View>
+                    ) 
+                }
+                {
+                    messageType === 'photo' &&
+                    (
+                        <View style={[{ height: Math.max(100, contentHeight + 20) }]}>
+                            <TouchableOpacity onPress={openCamera}>
+                                    { photo ? (
+                                        <Image source={{ uri: photo }} style={{ width: 100, height: 100 }} />
+                                    ) : (
+                                        <View style={{ width: 100, height: 100, backgroundColor: 'lightgray', justifyContent: 'center', alignItems: 'center' }}>
+                                            <FontAwesomeIcon icon={faCamera} size={30} color={'gray'} />
+                                        </View>
+                                    )}
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
                 <View style={styles.calendarContainer}>
                     <Text style={styles.calendarText}>When should the message be unlocked?</Text>
                     
                     <View>
-                        <TouchableOpacity onPress={() => handleShowDate()} style={[styles.messageTypeButton, styles.messageTypeButtonFullWidth]}>
+                        <TouchableOpacity onPress={() => handleShowDate()} style={[styles.messageVisibilityButton, styles.messageVisibilityButtonFullWidth]}>
                             <View style={styles.containerRow}>
                                 <FontAwesomeIcon icon={faCalendar}/>
                                 <Text> {messageDate.toLocaleDateString()}</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleShowTime()} style={[styles.messageTypeButton, styles.messageTypeButtonFullWidth]}>
+                        <TouchableOpacity onPress={() => handleShowTime()} style={[styles.messageVisibilityButton, styles.messageVisibilityButtonFullWidth]}>
                         <View style={styles.containerRow}>
                                 <FontAwesomeIcon icon={faClock}/>
                                 <Text> {messageDate.toLocaleTimeString()}</Text>
@@ -204,29 +256,56 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    messageVisibilityContainer: {
+        flexDirection: 'row',
+        marginBottom: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
     messageTypeContainer: {
         flexDirection: 'row',
         marginBottom: 20,
         alignItems: 'center',
         justifyContent: 'center'
     },
-    messageTypeButton: {
+    messageVisibilityButton: {
         backgroundColor: 'lightgray',
         paddingVertical: 10,
         paddingHorizontal: 60,
+    },
+    messageTypeButton: {
+        backgroundColor: 'lightgray',
+        paddingVertical: 10,
+        paddingHorizontal: 65,
+    },
+    messageVisibilityButtonFullWidth: {
+        width: '100%',
+        borderRadius: 5,
+        marginBottom: 2,
     },
     messageTypeButtonFullWidth: {
         width: '100%',
         borderRadius: 5,
         marginBottom: 2,
     },
+    messageVisibilityButtonLeft: {
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10
+    },
     messageTypeButtonLeft: {
         borderTopLeftRadius: 10,
         borderBottomLeftRadius: 10
     },
+    messageVisibilityButtonRight: {
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 10
+    },
     messageTypeButtonRight: {
         borderTopRightRadius: 10,
         borderBottomRightRadius: 10
+    },
+    selectedVisibility: {
+        backgroundColor: '#fb5b5a',
     },
     selectedType: {
         backgroundColor: '#fb5b5a',
