@@ -6,7 +6,6 @@ import com.timetravellers.backend.entities.to.PwResetTo;
 import com.timetravellers.backend.exceptions.authentication.*;
 import com.timetravellers.backend.security.services.AuthenticationService;
 import com.timetravellers.backend.services.PwResetService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

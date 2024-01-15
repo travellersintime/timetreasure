@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,12 +21,12 @@ public class MessageController {
     private MessageService messageService;
 
     @CrossOrigin
-    @PostMapping("/messages")
-    public ResponseEntity<Message> createMessage(@RequestBody MessageTo messageTo) {
+    @PostMapping("/messages/text")
+    public ResponseEntity<Message> createTextMessage(@RequestBody MessageTo messageTo) {
 
-        Message message = null;
+        Message message;
         try {
-            message = messageService.insert(messageTo);
+            message = messageService.insertTextMessage(messageTo);
         } catch (MessageRecipientCannotBeEmptyException e) {
             return new ResponseEntity("Message recipient cannot be empty.", HttpStatus.BAD_REQUEST);
         } catch (MessageTitleCannotBeEmptyException e) {
@@ -37,6 +40,36 @@ public class MessageController {
         }
 
         return new ResponseEntity(message, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping("/messages/image")
+    public ResponseEntity<Message> createImageMessage(@RequestParam("file") MultipartFile multipartFile, @RequestPart("title") String title, @RequestPart("author") String author, @RequestPart("recipient") String recipient, @RequestPart("isPublic") String isPublic, @RequestPart("expiresOn") String expiresOn) {
+        Message message;
+
+        try {
+            message = messageService.insertImageMessage(multipartFile, title, author, recipient, isPublic, LocalDateTime.parse(expiresOn));
+        } catch (MessageRecipientCannotBeEmptyException e) {
+            return new ResponseEntity("Message recipient cannot be empty.", HttpStatus.BAD_REQUEST);
+        } catch (MessageTitleCannotBeEmptyException e) {
+            return new ResponseEntity("Message title cannot be empty.", HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            return new ResponseEntity("There was an error while trying to process the request.", HttpStatus.BAD_REQUEST);
+        } catch (MessageContentCannotBeEmptyException e) {
+            return new ResponseEntity("Message content cannot be empty.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (message == null) {
+            return new ResponseEntity("There was an error while creating the message.", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity(message, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping("/messages/test")
+    public ResponseEntity<Message> test(@RequestParam("file") MultipartFile multipartFile, @RequestPart("test") String test) {
+        return new ResponseEntity("", HttpStatus.OK);
     }
 
     @CrossOrigin

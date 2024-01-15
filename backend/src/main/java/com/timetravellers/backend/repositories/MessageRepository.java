@@ -13,4 +13,5 @@ public interface MessageRepository extends MongoRepository<Message, ObjectId> {
     Optional<Message> findById(ObjectId id);
     List<Message> findByRecipient(String recipient);
     List<Message> findByIsPublic(String isPublic);
+    Optional<Message> findByObjectKey(String objectKey);
 }

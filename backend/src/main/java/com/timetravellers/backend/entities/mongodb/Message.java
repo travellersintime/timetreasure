@@ -15,14 +15,17 @@ import java.time.LocalDateTime;
 public class Message {
     @MongoId(value = FieldType.OBJECT_ID)
     private String id;
+    private String messageType;
     private String title;
     private String content;
     private String author;
     private String recipient;
     private String isPublic;
     private LocalDateTime expiresOn;
+    private String objectKey;
 
-    public Message(String title, String content, String author, String recipient, String isPublic, LocalDateTime expiresOn) {
+    public Message(String messageType, String title, String content, String author, String recipient, String isPublic, LocalDateTime expiresOn) {
+        this.messageType = messageType;
         this.title = title;
         this.content = content;
         this.author = author;
