@@ -8,6 +8,8 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons/faCalendar'
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock'
 import { faCamera } from '@fortawesome/free-solid-svg-icons/faCamera';
+import { faKeyboard } from '@fortawesome/free-solid-svg-icons';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 import Footer from './Footer';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -172,10 +174,10 @@ const CreateTextMessage = (props: Props) => {
                 </View>
                 <View style={styles.messageTypeContainer}>
                     <TouchableOpacity onPress={() => handleTypeChange('photo')} style={[styles.messageTypeButton, styles.messageTypeButtonLeft, messageType === 'photo' && styles.selectedType]}>
-                        <Text>Photo</Text>
+                        <FontAwesomeIcon icon={faImage}/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => handleTypeChange('text')} style={[styles.messageTypeButton, styles.messageTypeButtonRight, messageType === 'text' && styles.selectedType]}>
-                        <Text>Text</Text>
+                        <FontAwesomeIcon icon={faKeyboard}/>
                     </TouchableOpacity>
                 </View>
                 {
@@ -215,12 +217,12 @@ const CreateTextMessage = (props: Props) => {
                     messageType === 'photo' &&
                     (
                         <View style={[{ height: Math.max(100, contentHeight + 20) }]}>
-                            <TouchableOpacity onPress={openCamera}>
+                            <TouchableOpacity onPress={openCamera} style={{ alignItems: 'center' }}>
                                     { photo ? (
-                                        <Image source={{ uri: photo.uri }} style={{ width: 100, height: 100 }} />
+                                        <Image source={{ uri: photo.uri }} style={{ width: 100, height: 100 , borderRadius: 50}} />
                                     ) : (
-                                        <View style={{ width: 100, height: 100, backgroundColor: 'lightgray', justifyContent: 'center', alignItems: 'center' }}>
-                                            <FontAwesomeIcon icon={faCamera} size={30} color={'gray'} />
+                                        <View style={{ width: 100, height: 100, backgroundColor: 'lightgray', justifyContent: 'center', alignItems: 'center', borderRadius: 50 }}>
+                                            <FontAwesomeIcon icon={faCamera} size={30} color={'#fb5b5a'} />
                                         </View>
                                     )}
                             </TouchableOpacity>
