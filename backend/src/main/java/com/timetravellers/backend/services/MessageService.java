@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,8 +55,12 @@ public class MessageService {
     }
 
 
-    public Message insertImageMessage(MultipartFile multipartFile, String title, String author, String recipient, String isPublic, LocalDateTime expiresOn) throws IOException, MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException {
+    public Message insertImageMessage(MultipartFile multipartFile, String title, String author, String recipient, String isPublic, String expiresOn) throws IOException, MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException {
         performMessageChecks(isPublic, recipient, title);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                .withZone(ZoneId.of("UTC"));
+        LocalDateTime expiresOnDate = LocalDateTime.parse(expiresOn, formatter);
 
         if (multipartFile.isEmpty()) {
             throw new MessageContentCannotBeEmptyException();
@@ -67,7 +73,7 @@ public class MessageService {
             objectKey = StringGenerator.generateObjectKey();
         } while (!messageRepository.findByObjectKey(objectKey).isEmpty());
 
-        Message message = new Message("image", title, null, author, recipient, isPublic, expiresOn);
+        Message message = new Message("image", title, null, author, recipient, isPublic, expiresOnDate);
         message.setObjectKey(objectKey);
 
         // Convert the multipart file into a java File

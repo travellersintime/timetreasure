@@ -20,13 +20,16 @@ const SignIn = (props: Props) => {
 
     const handleSignIn = async () => {
         try {
-          const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/login", {username, password})
+          const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/auth/login", {username, password})
           await AsyncStorage.setItem('token', response.data.token);
           await AsyncStorage.setItem('username', username);
           props.navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: "MessageFeed"}]}));
 
         } catch (error) {
-            if (error.response.data == undefined || error.response.data == "") {
+            if (error.response == undefined) {
+                alert("Network error encountered. Please try again later.");
+            }
+            else if (error.response.data == undefined || error.response.data == "") {
                 alert("Could not sign you in. Please make sure that the credentials are correct.");
             }
             else {

@@ -17,7 +17,7 @@ const ResetPassword = (props: Props) => {
 
     const handleUpdatePassword = async () => {
         try {
-            const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/resetPassword", {code: verificationCode, newPassword: password});
+            const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/auth/resetPassword", {code: verificationCode, newPassword: password});
   
             if (response.status == 200) {
               alert("Password has been successfully updated.");

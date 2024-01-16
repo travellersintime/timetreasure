@@ -48,7 +48,7 @@ public class MessageController {
         Message message;
 
         try {
-            message = messageService.insertImageMessage(multipartFile, title, author, recipient, isPublic, LocalDateTime.parse(expiresOn));
+            message = messageService.insertImageMessage(multipartFile, title, author, recipient, isPublic, expiresOn);
         } catch (MessageRecipientCannotBeEmptyException e) {
             return new ResponseEntity("Message recipient cannot be empty.", HttpStatus.BAD_REQUEST);
         } catch (MessageTitleCannotBeEmptyException e) {
@@ -64,12 +64,6 @@ public class MessageController {
         }
 
         return new ResponseEntity(message, HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @PostMapping("/messages/test")
-    public ResponseEntity<Message> test(@RequestParam("file") MultipartFile multipartFile, @RequestPart("test") String test) {
-        return new ResponseEntity("", HttpStatus.OK);
     }
 
     @CrossOrigin

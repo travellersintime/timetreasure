@@ -36,7 +36,7 @@ const MyProfile = (props: Props) => {
         try {
             const response = 
                 await axios.delete (
-                    "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/delete/" + messageId, 
+                    "http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/messages/delete/" + messageId, 
                     {
                         headers: {
                             'Authorization': authorizationHeader, 

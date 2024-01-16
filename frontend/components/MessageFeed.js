@@ -13,8 +13,6 @@ import { isExpired, convertToDaysHoursMinutesFormat } from '../helpers/DateFunct
 import Footer from './Footer';
 import { Dimensions } from 'react-native';
 import { useActiveRoute } from './ActiveRouteContext';
-
-
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -36,7 +34,7 @@ const MessageFeed = () => {
 
             const response = 
                 await axios.get (
-                    "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/isPublic/true", 
+                    "http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/messages/isPublic/true", 
                     {
                         headers: {
                             'Authorization': authorizationHeader, 

@@ -17,6 +17,10 @@ const Footer = (props: Props) => {
     }, [activeRoute, navigation]);
 
     const handleIconClick = (routeName) => {
+        navigation.reset({
+            index: 0,
+            routes: [{name: routeName}],
+        })
         setActiveRoute(routeName, {});
     };
 

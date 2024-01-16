@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Image } from 'react-native';
 import {
     SafeAreaView
   } from 'react-native-safe-area-context';
@@ -18,6 +18,7 @@ interface Props {
 }
 
 const screenHeight = Dimensions.get('window').height;
+const win = Dimensions.get('window');
 
 const SingleMessage = (props: Props) => {
     const [message, setMessage] = useState([]);
@@ -32,7 +33,7 @@ const SingleMessage = (props: Props) => {
 
             const response = 
                 await axios.get (
-                    "http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages/id/" + activeRoute.params.messageId, 
+                    "http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/messages/id/" + activeRoute.params.messageId, 
                     {
                         headers: {
                             'Authorization': authorizationHeader, 
@@ -63,6 +64,7 @@ const SingleMessage = (props: Props) => {
         fetchMessage();
       }, []);
 
+
     if (loading == true) {
         return (
             <SafeAreaView style={styles.safeAreaView}>
@@ -89,7 +91,21 @@ const SingleMessage = (props: Props) => {
                             </View>
                             <View>
                                 <View style={styles.container}>
-                                    <Text style={styles.messageContent}>{message.content}</Text>
+                                    {
+                                        loading ? (
+                                            <Text>Loading...</Text>
+                                        ) : (message.messageType === "text" ? (
+                                            <Text style={styles.messageContent}>{message.content}</Text>
+                                        ) : (
+                                            <View>
+                                            <Image
+                                                style={styles.image}
+                                                resizeMode={'contain'}
+                                                source={{uri: "https://timetreasure.s3.eu-central-1.amazonaws.com/" + message.objectKey}}
+                                                />                                            
+                                            </View>
+                                        ))
+                                    }
                                 </View>
                             </View>
                         </View>
@@ -104,6 +120,13 @@ const SingleMessage = (props: Props) => {
 }
 
 const styles=StyleSheet.create({
+    image: {
+        flex: 1,
+        alignSelf: 'stretch',
+        width: win.width/1.21,
+        height: win.height/2,
+    },
+
     container: {
             borderStyle: 'solid',
             borderWidth: 1,

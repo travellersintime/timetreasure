@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet,Text,View,TextInput,TouchableOpacity, ScrollView, Image } from 'react-native';
+import { StyleSheet,Text,View,TextInput,TouchableOpacity, ScrollView, Image, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import axios from 'axios';
@@ -43,7 +43,7 @@ const CreateTextMessage = (props: Props) => {
         const result = await ImagePicker.launchImageLibraryAsync();
 
         if(!result.canceled) {
-            setPhoto(result.uri);
+            setPhoto(result.assets[0])
         }
     };
     
@@ -76,24 +76,69 @@ const CreateTextMessage = (props: Props) => {
             const authorizationHeader = 'Bearer ' + token;
 
             const username = await AsyncStorage.getItem("username");
-            const response = await axios.post("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/messages", {
-                title: messageTitle,
-                content: messageContent,
-                author: username,
-                recipient: messageRecipient,
-                isPublic: messageVisibility === "private" ? "false" : "true",
-                expiresOn: new Date(messageDate.getTime() + 7200 * 1000)
-            }, {
-                headers: {
-                    'Authorization': authorizationHeader, 
+
+
+            if (messageType === "text") {
+                const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/messages/text", {
+                    title: messageTitle,
+                    content: messageContent,
+                    author: username,
+                    recipient: messageVisibility === "public" ? "admin" : messageRecipient,
+                    isPublic: messageVisibility === "private" ? "false" : "true",
+                    expiresOn: new Date(messageDate.getTime() + 7200 * 1000)
+                }, {
+                    headers: {
+                        'Authorization': authorizationHeader, 
+                    }
+                });
+            }
+            else if (messageType === "photo") {
+                const formData = new FormData();
+                let imageType = "";
+
+                console.log(photo.type);
+                console.log(photo.uri);
+
+                if (String(photo.uri).endsWith("jpeg") || String(photo.uri).endsWith("jpg")) {
+                    imageType = "image/jpeg";
                 }
-            });
+                else if (String(photo.uri).endsWith("png")) {
+                    imageType = "image/png";
+                }
+
+                formData.append('file', {
+                    name: "myImage.jpg",
+                    type: imageType,
+                    uri: photo.uri,
+                });
+                formData.append('title', messageTitle);
+                formData.append('author', username);
+
+                console.log(messageVisibility)
+                formData.append('recipient', messageVisibility === "public" ? "admin" : messageRecipient);
+                formData.append('isPublic', messageVisibility === "private" ? "false" : "true");
+                const expiresOnDate = new Date(messageDate.getTime() + 7200 * 1000);
+                formData.append('expiresOn', expiresOnDate.toISOString());
+
+                const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/messages/image", formData, {
+                    headers: {
+                        'Authorization': authorizationHeader,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            }
 
             alert("Message sent successfully.");
             setActiveRoute("MessageFeed", {});
             navigation.navigate('MessageFeed');
         } catch (error) {
-            alert(error.response.data);
+            if (error.response != undefined) {
+                alert(error.response.data);
+            }
+            else {
+                console.log(error);
+                alert("Unknown error.");
+            }
         }
     };
 
@@ -105,6 +150,7 @@ const CreateTextMessage = (props: Props) => {
 
     useEffect(() => {
         setMessageVisibility("private");
+        setMessageType("photo");
     }, []);
 
     return (
@@ -171,7 +217,7 @@ const CreateTextMessage = (props: Props) => {
                         <View style={[{ height: Math.max(100, contentHeight + 20) }]}>
                             <TouchableOpacity onPress={openCamera}>
                                     { photo ? (
-                                        <Image source={{ uri: photo }} style={{ width: 100, height: 100 }} />
+                                        <Image source={{ uri: photo.uri }} style={{ width: 100, height: 100 }} />
                                     ) : (
                                         <View style={{ width: 100, height: 100, backgroundColor: 'lightgray', justifyContent: 'center', alignItems: 'center' }}>
                                             <FontAwesomeIcon icon={faCamera} size={30} color={'gray'} />
