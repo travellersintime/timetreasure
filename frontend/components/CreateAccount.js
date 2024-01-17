@@ -22,7 +22,12 @@ const CreateAccount = (props: Props) => {
           await AsyncStorage.setItem('username', username);
           props.navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: "MessageFeed"}]}));
         } catch (error) {
-            alert(error.response.data);
+            if (error.response == undefined || error.response == "" || error.response.data === "") {
+                alert("Unknown error. It might be from the server. Please try again later.");
+            }
+            else {
+                alert(error.response.data);
+            }       
         }
     };
 

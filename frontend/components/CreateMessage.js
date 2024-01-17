@@ -20,7 +20,7 @@ interface Props {
     navigation: any;
 }
 
-const CreateTextMessage = (props: Props) => {
+const CreateMessage = (props: Props) => {
     const navigation = useNavigation();
     const [messageVisibility, setMessageVisibility] = useState('');
     const [messageTitle, setMessageTitle] = useState('');
@@ -134,13 +134,12 @@ const CreateTextMessage = (props: Props) => {
             setActiveRoute("MessageFeed", {});
             navigation.navigate('MessageFeed');
         } catch (error) {
-            if (error.response != undefined) {
-                alert(error.response.data);
+            if (error.response == undefined || error.response == "" || error.response.data === "") {
+                alert("Error encountered while sending the message. Make sure no fields were left empty before trying again.");
             }
             else {
-                console.log(error);
-                alert("Unknown error.");
-            }
+                alert(error.response.data);
+            }  
         }
     };
 
@@ -401,4 +400,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default CreateTextMessage;
+export default CreateMessage;

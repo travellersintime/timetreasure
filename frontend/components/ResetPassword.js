@@ -25,12 +25,12 @@ const ResetPassword = (props: Props) => {
             }
           } catch (error) {
             console.log(error)
-              if (error.response.data == "") {
-                  alert("Unknown error. It might be from the server. Please try again later.");
-              }
-              else {
-                  alert(error.response.data);
-              }
+                if (error.response == undefined || error.response == "" || error.response.data === "") {
+                    alert("Unknown error. It might be from the server. Please try again later.");
+                }
+                else {
+                    alert(error.response.data);
+                }    
           }
     }
 

@@ -9,6 +9,7 @@ import com.timetravellers.backend.entities.mongodb.User;
 import com.timetravellers.backend.entities.to.MessageTo;
 import com.timetravellers.backend.exceptions.messages.*;
 import com.timetravellers.backend.repositories.MessageRepository;
+import com.timetravellers.backend.repositories.UserRepository;
 import com.timetravellers.backend.utils.StringGenerator;
 import com.timetravellers.backend.validators.MessageValidator;
 import org.bson.types.ObjectId;
@@ -28,14 +29,16 @@ import java.util.Optional;
 public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private MessageValidator messageValidator;
     @Autowired
     private AmazonS3 amazonS3Client;
 
-    public Message insertTextMessage(MessageTo messageTo) throws MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException {
-        performMessageChecks(messageTo.getIsPublic(), messageTo.getRecipient(), messageTo.getTitle());
+    public Message insertTextMessage(MessageTo messageTo) throws MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException, MessageRecipientDoesNotExistException {
+        performMessageChecks(messageTo.getIsPublic(), messageTo.getRecipient().toLowerCase(), messageTo.getTitle());
 
         if (messageTo.getIsPublic().equals("false") && messageTo.getRecipient().isEmpty()) {
             throw new MessageRecipientCannotBeEmptyException();
@@ -49,13 +52,13 @@ public class MessageService {
             throw new MessageContentCannotBeEmptyException();
         }
 
-        Message message = new Message("text", messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient(), messageTo.getIsPublic(), messageTo.getExpiresOn());
+        Message message = new Message("text", messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient().toLowerCase(), messageTo.getIsPublic(), messageTo.getExpiresOn());
 
         return messageRepository.save(message);
     }
 
 
-    public Message insertImageMessage(MultipartFile multipartFile, String title, String author, String recipient, String isPublic, String expiresOn) throws IOException, MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException {
+    public Message insertImageMessage(MultipartFile multipartFile, String title, String author, String recipient, String isPublic, String expiresOn) throws IOException, MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException, MessageRecipientDoesNotExistException {
         performMessageChecks(isPublic, recipient, title);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -119,7 +122,7 @@ public class MessageService {
             } else {
                 return message.get();
             }
-        } else if (user.getUsername().equals(message.get().getAuthor()) || user.getUsername().equals(message.get().getRecipient()) || user.getRole().equals(Role.ADMIN)) {
+        } else if (user.getUsername().equals(message.get().getAuthor()) || user.getUsername().equals(message.get().getRecipient().toLowerCase()) || user.getRole().equals(Role.ADMIN)) {
             if (message.get().getExpiresOn().isAfter(LocalDateTime.now())) {
                 throw new MessageNotYetAvailableException();
             } else {
@@ -131,11 +134,11 @@ public class MessageService {
     }
 
     public List<Message> findByRecipient(String recipient) {
-        List<Message> messageList = messageRepository.findByRecipient(recipient);
+        List<Message> messageList = messageRepository.findByRecipient(recipient.toLowerCase());
 
         // User needs to be that recipient, or be an ADMIN
         var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!user.getUsername().equals(recipient) && !user.getRole().equals(Role.ADMIN)) {
+        if (!user.getUsername().equals(recipient.toLowerCase()) && !user.getRole().equals(Role.ADMIN)) {
             return null;
         }
 
@@ -157,16 +160,20 @@ public class MessageService {
 
         var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (!message.get().getRecipient().equals(user.getUsername()) && !user.getRole().equals(Role.ADMIN)) {
+        if (!message.get().getRecipient().toLowerCase().equals(user.getUsername()) && !user.getRole().equals(Role.ADMIN)) {
             throw new InsufficientPermissionsException();
         }
 
         messageRepository.deleteById(id);
     }
 
-    private void performMessageChecks(String isPublic, String recipient, String title) throws MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException {
+    private void performMessageChecks(String isPublic, String recipient, String title) throws MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageRecipientDoesNotExistException {
         if (isPublic.equals("false") && recipient.isEmpty()) {
             throw new MessageRecipientCannotBeEmptyException();
+        }
+
+        if (isPublic.equals("false") && userRepository.findByUsername(recipient).isEmpty()) {
+            throw new MessageRecipientDoesNotExistException();
         }
 
         if (title.isEmpty()) {

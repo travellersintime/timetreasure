@@ -26,15 +26,13 @@ const SignIn = (props: Props) => {
           props.navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: "MessageFeed"}]}));
 
         } catch (error) {
-            if (error.response == undefined) {
-                alert("Network error encountered. Please try again later.");
-            }
-            else if (error.response.data == undefined || error.response.data == "") {
-                alert("Could not sign you in. Please make sure that the credentials are correct.");
+            console.log(error.response);
+            if (error.response == undefined || error.response == "" || error.response.data === "") {
+                alert("Could not sign you in. Make sure that the credentials are correct and try again.");
             }
             else {
                 alert(error.response.data);
-            }
+            }  
         }
       };
 
@@ -50,12 +48,12 @@ const SignIn = (props: Props) => {
             props.navigation.navigate('ResetPassword', {username: emailAddress});
           }
         } catch (error) {
-            if (error.response.data == "") {
-                alert("Unknown error encountered while trying to process your e-mail address.");
+            if (error.response == undefined || error.response == "" || error.response.data === "") {
+                alert("Unknown error. It might be from the server. Please try again later.");
             }
             else {
                 alert(error.response.data);
-            }
+            }  
         }
 
     };

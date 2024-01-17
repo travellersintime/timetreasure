@@ -67,7 +67,7 @@ public class PwResetService {
                 throw new InvalidPasswordException();
             }
 
-            Optional<User> userOptional = userRepository.findByUsername(pwReset.get().getUsername());
+            Optional<User> userOptional = userRepository.findByUsername(pwReset.get().getUsername().toLowerCase());
 
             if (userOptional.isEmpty()) {
                 throw new UserDoesNotExistException();
@@ -77,7 +77,7 @@ public class PwResetService {
             user.setPassword(passwordEncoder.encode(pwResetTo.getNewPassword()));
             userRepository.save(user);
 
-            pwResetRepository.deleteByUsername(pwReset.get().getUsername());
+            pwResetRepository.deleteByUsername(pwReset.get().getUsername().toLowerCase());
         }
         else {
             throw new InvalidCodeException();

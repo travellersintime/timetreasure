@@ -52,7 +52,12 @@ const MyProfile = (props: Props) => {
             }
         }
         catch (error) {
-            alert(error.response.data);
+            if (error.response == undefined || error.response == "" || error.response.data === "") {
+                alert("Unknown error. It might be from the server. Please try again later.");
+            }
+            else {
+                alert(error.response.data);
+            }          
         }
     }
 
@@ -83,7 +88,12 @@ const MyProfile = (props: Props) => {
             setMessages(response.data);
             setLoading(false);
         } catch (error) {
-            alert(error.response.data);
+            if (error.response == undefined || error.response == "" || error.response.data === "") {
+                alert("Unknown error. It might be from the server. Please try again later.");
+            }
+            else {
+                alert(error.response.data);
+            }         
         }
       };
 

@@ -32,8 +32,8 @@ const Footer = (props: Props) => {
             <TouchableOpacity style={styles.bottomBtn} onPress={() => handleIconClick('MessageFeed')}>
                 <FontAwesomeIcon icon={faHouse} size={30} color={activeRoute.route === 'MessageFeed' ? '#fb5b5a' : null}/>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomBtn} onPress={() => handleIconClick('CreateTextMessage')}>
-                <FontAwesomeIcon icon={faCirclePlus} size={30} color={activeRoute.route === 'CreateTextMessage' ? '#fb5b5a' : null}/>
+            <TouchableOpacity style={styles.bottomBtn} onPress={() => handleIconClick('CreateMessage')}>
+                <FontAwesomeIcon icon={faCirclePlus} size={30} color={activeRoute.route === 'CreateMessage' ? '#fb5b5a' : null}/>
             </TouchableOpacity>
         </View>
     );

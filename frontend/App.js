@@ -3,7 +3,7 @@ import SignIn from './components/SignIn';
 import CreateAccount from './components/CreateAccount'
 import MessageFeed from './components/MessageFeed';
 import SingleMessage from './components/SingleMessage';
-import CreateTextMessage from './components/CreateTextMessage';
+import CreateMessage from './components/CreateMessage';
 import MyProfile from './components/MyProfile'
 import ResetPassword from './components/ResetPassword'
 import { NavigationContainer } from '@react-navigation/native';
@@ -36,7 +36,7 @@ const App =  () => {
         <Stack.Screen name='CreateAccount' component={CreateAccount} options={{animationEnabled: false}}/>
         <Stack.Screen name='MessageFeed' component={MessageFeed} options={{animationEnabled: false}}/>
         <Stack.Screen name='SingleMessage' component={SingleMessage} options={{animationEnabled: false}}/>
-        <Stack.Screen name='CreateTextMessage' component={CreateTextMessage} options={{animationEnabled: false}}/>
+        <Stack.Screen name='CreateMessage' component={CreateMessage} options={{animationEnabled: false}}/>
         <Stack.Screen name='MyProfile' component={MyProfile} options={{animationEnabled: false}}/>
         <Stack.Screen name='ResetPassword' component={ResetPassword} options={{animationEnabled: false}}/>
       </Stack.Navigator>

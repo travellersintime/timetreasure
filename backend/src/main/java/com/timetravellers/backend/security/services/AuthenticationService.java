@@ -62,7 +62,7 @@ public class AuthenticationService {
             throw new UserAlreadyExistsException();
         }
 
-        User user = new User(authRequestTo.getUsername(), passwordEncoder.encode(authRequestTo.getPassword()), Role.USER);
+        User user = new User(authRequestTo.getUsername().toLowerCase(), passwordEncoder.encode(authRequestTo.getPassword()), Role.USER);
         userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);
         return new AuthResponseTo(jwtToken);

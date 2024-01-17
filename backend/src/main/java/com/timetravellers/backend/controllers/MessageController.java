@@ -33,6 +33,8 @@ public class MessageController {
             return new ResponseEntity("Message title cannot be empty.", HttpStatus.BAD_REQUEST);
         } catch (MessageContentCannotBeEmptyException e) {
             return new ResponseEntity("Message content cannot be empty.", HttpStatus.BAD_REQUEST);
+        } catch (MessageRecipientDoesNotExistException e) {
+            return new ResponseEntity("Message recipient does not exist.", HttpStatus.BAD_REQUEST);
         }
 
         if (message == null) {
@@ -57,6 +59,8 @@ public class MessageController {
             return new ResponseEntity("There was an error while trying to process the request.", HttpStatus.BAD_REQUEST);
         } catch (MessageContentCannotBeEmptyException e) {
             return new ResponseEntity("Message content cannot be empty.", HttpStatus.BAD_REQUEST);
+        } catch (MessageRecipientDoesNotExistException e) {
+            return new ResponseEntity("Message recipient does not exist.", HttpStatus.BAD_REQUEST);
         }
 
         if (message == null) {
