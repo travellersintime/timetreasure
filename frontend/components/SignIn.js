@@ -27,12 +27,7 @@ const SignIn = (props: Props) => {
 
         } catch (error) {
             console.log(error.response);
-            if (error.response == undefined || error.response == "" || error.response.data === "") {
-                alert("Could not sign you in. Make sure that the credentials are correct and try again.");
-            }
-            else {
-                alert(error.response.data);
-            }  
+            alert("Could not sign you in. Make sure that the credentials are correct and try again.");
         }
       };
 

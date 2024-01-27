@@ -11,6 +11,7 @@
     <groupId>com.timetravellers</groupId>
     <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>backend</name>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -92,6 +93,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>webapp-tomcat</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

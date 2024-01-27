@@ -14,13 +14,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-
-import java.util.List;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -54,7 +51,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(e -> e.disable())
                 .authorizeHttpRequests(e -> e
-                        .requestMatchers("/auth/**").permitAll() // Requests to "/auth/**" are allowed for anybody
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll() // Requests to "/auth/**" are allowed for anybody
                         .anyRequest().authenticated()) // Requests to other endpoints need authentication
                 .sessionManagement(e -> e.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // New session will be created for each request
                 .authenticationProvider(authenticationProvider())
