@@ -17,14 +17,13 @@ const ResetPassword = (props: Props) => {
 
     const handleUpdatePassword = async () => {
         try {
-            const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/auth/resetPassword", {code: verificationCode, newPassword: password});
+            const response = await axios.post("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/auth/resetPassword", {code: verificationCode, newPassword: password});
   
             if (response.status == 200) {
               alert("Password has been successfully updated.");
               props.navigation.navigate('SignIn');
             }
           } catch (error) {
-            console.log(error)
                 if (error.response == undefined || error.response == "" || error.response.data === "") {
                     alert("Unknown error. It might be from the server. Please try again later.");
                 }

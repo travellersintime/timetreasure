@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import 'react-native-gesture-handler';
 import SignIn from './components/SignIn';
 import CreateAccount from './components/CreateAccount'
 import MessageFeed from './components/MessageFeed';

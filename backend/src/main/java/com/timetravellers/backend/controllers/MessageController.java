@@ -46,11 +46,11 @@ public class MessageController {
 
     @CrossOrigin
     @PostMapping("/messages/image")
-    public ResponseEntity<Message> createImageMessage(@RequestParam("file") MultipartFile multipartFile, @RequestPart("title") String title, @RequestPart("author") String author, @RequestPart("recipient") String recipient, @RequestPart("isPublic") String isPublic, @RequestPart("expiresOn") String expiresOn) {
+    public ResponseEntity<Message> createImageMessage(@RequestParam("file") MultipartFile multipartFile, @RequestPart("title") String title, @RequestPart("author") String author, @RequestPart("recipient") String recipient, @RequestPart("isPublic") String isPublic, @RequestPart("expiresOn") String expiresOn, @RequestPart("actualTime") String actualTime) {
         Message message;
 
         try {
-            message = messageService.insertImageMessage(multipartFile, title, author, recipient, isPublic, expiresOn);
+            message = messageService.insertImageMessage(multipartFile, title, author, recipient, isPublic, expiresOn, actualTime);
         } catch (MessageRecipientCannotBeEmptyException e) {
             return new ResponseEntity("Message recipient cannot be empty.", HttpStatus.BAD_REQUEST);
         } catch (MessageTitleCannotBeEmptyException e) {

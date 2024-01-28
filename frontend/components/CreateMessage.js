@@ -3,6 +3,9 @@ import { StyleSheet,Text,View,TextInput,TouchableOpacity, ScrollView, Image, Pla
 import { useNavigation } from '@react-navigation/native';
 import {BACKEND_ADDRESS, BACKEND_PORT} from "@env";
 import axios from 'axios';
+import {
+    SafeAreaView
+  } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane'
 import { faCalendar } from '@fortawesome/free-solid-svg-icons/faCalendar'
@@ -14,11 +17,14 @@ import Footer from './Footer';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useActiveRoute } from './ActiveRouteContext';
+import { Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 interface Props {
     navigation: any;
 }
+
+const screenHeight = Dimensions.get('window').height;
 
 const CreateMessage = (props: Props) => {
     const navigation = useNavigation();
@@ -79,15 +85,18 @@ const CreateMessage = (props: Props) => {
 
             const username = await AsyncStorage.getItem("username");
 
+            const currentDate = new Date();
 
             if (messageType === "text") {
-                const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/messages/text", {
+
+                const response = await axios.post("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/text", {
                     title: messageTitle,
                     content: messageContent,
                     author: username,
                     recipient: messageVisibility === "public" ? "admin" : messageRecipient,
                     isPublic: messageVisibility === "private" ? "false" : "true",
-                    expiresOn: new Date(messageDate.getTime() + 7200 * 1000)
+                    expiresOn: new Date(messageDate.getTime() + 7200 * 1000),
+                    actualTime: new Date(currentDate.getTime() + 7200 * 1000)
                 }, {
                     headers: {
                         'Authorization': authorizationHeader, 
@@ -97,9 +106,6 @@ const CreateMessage = (props: Props) => {
             else if (messageType === "photo") {
                 const formData = new FormData();
                 let imageType = "";
-
-                console.log(photo.type);
-                console.log(photo.uri);
 
                 if (String(photo.uri).endsWith("jpeg") || String(photo.uri).endsWith("jpg")) {
                     imageType = "image/jpeg";
@@ -116,13 +122,16 @@ const CreateMessage = (props: Props) => {
                 formData.append('title', messageTitle);
                 formData.append('author', username);
 
-                console.log(messageVisibility)
                 formData.append('recipient', messageVisibility === "public" ? "admin" : messageRecipient);
                 formData.append('isPublic', messageVisibility === "private" ? "false" : "true");
                 const expiresOnDate = new Date(messageDate.getTime() + 7200 * 1000);
                 formData.append('expiresOn', expiresOnDate.toISOString());
 
-                const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/messages/image", formData, {
+                const actualTimeDate = new Date(currentDate.getTime() + 7200 * 1000);
+                formData.append('actualTime', actualTimeDate.toISOString());
+
+
+                const response = await axios.post("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/image", formData, {
                     headers: {
                         'Authorization': authorizationHeader,
                         'Content-Type': 'multipart/form-data'
@@ -155,14 +164,15 @@ const CreateMessage = (props: Props) => {
     }, []);
 
     return (
-        <View style={styles.container}>
-            <ScrollView style={{flex: 1}}>
+        <SafeAreaView style={styles.safeAreaView}>
+            <View style={{flex: .95}}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Create a text message</Text>
+                <Text style={styles.title}>Create</Text>
                     <TouchableOpacity style={styles.sendButton} onPress={() => handleSendMessage()}>
                         <FontAwesomeIcon icon={faPaperPlane}/>
                     </TouchableOpacity>
                 </View>
+            <ScrollView style={styles.scrollView}>
                 <View style={styles.messageVisibilityContainer}>
                     <TouchableOpacity onPress={() => handleVisibilityChange('private')} style={[styles.messageVisibilityButton, styles.messageVisibilityButtonLeft, messageVisibility === 'private' && styles.selectedVisibility]}>
                         <Text>Private</Text>
@@ -269,10 +279,11 @@ const CreateMessage = (props: Props) => {
                     }
                 </View>
             </ScrollView>
+            </View>
             
             <Footer />
             
-        </View>
+        </SafeAreaView>
         
     )
 }
@@ -285,13 +296,16 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 40
+    },
+    safeAreaView: {
+        padding: 20,
+        flex: 1
     },
     title: {
         fontWeight: "bold",
-        fontSize:25,
+        fontSize:30,
         color:"#fb5b5a",
-        marginBottom: 0,
+        marginBottom: 20,
     },
     sendButton: {
         paddingVertical: 10
@@ -302,6 +316,10 @@ const styles = StyleSheet.create({
         marginBottom: 3,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    scrollView: {
+        marginBottom: 50,
+        maxHeight: {screenHeight}
     },
     messageVisibilityContainer: {
         flexDirection: 'row',

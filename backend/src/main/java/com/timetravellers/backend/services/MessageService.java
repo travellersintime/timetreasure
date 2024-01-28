@@ -22,6 +22,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,18 +53,21 @@ public class MessageService {
             throw new MessageContentCannotBeEmptyException();
         }
 
-        Message message = new Message("text", messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient().toLowerCase(), messageTo.getIsPublic(), messageTo.getExpiresOn());
+        LocalDateTime newExpiresOn = processRelativeExpireDate(messageTo.getExpiresOn(), messageTo.getActualTime());
+
+        Message message = new Message("text", messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient().toLowerCase(), messageTo.getIsPublic(), newExpiresOn);
 
         return messageRepository.save(message);
     }
 
 
-    public Message insertImageMessage(MultipartFile multipartFile, String title, String author, String recipient, String isPublic, String expiresOn) throws IOException, MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException, MessageRecipientDoesNotExistException {
+    public Message insertImageMessage(MultipartFile multipartFile, String title, String author, String recipient, String isPublic, String expiresOn, String actualTime) throws IOException, MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException, MessageRecipientDoesNotExistException {
         performMessageChecks(isPublic, recipient, title);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                 .withZone(ZoneId.of("UTC"));
         LocalDateTime expiresOnDate = LocalDateTime.parse(expiresOn, formatter);
+        LocalDateTime actualTimeDate = LocalDateTime.parse(actualTime, formatter);
 
         if (multipartFile.isEmpty()) {
             throw new MessageContentCannotBeEmptyException();
@@ -76,7 +80,9 @@ public class MessageService {
             objectKey = StringGenerator.generateObjectKey();
         } while (!messageRepository.findByObjectKey(objectKey).isEmpty());
 
-        Message message = new Message("image", title, null, author, recipient, isPublic, expiresOnDate);
+        LocalDateTime newExpiresOn = processRelativeExpireDate(expiresOnDate, actualTimeDate);
+
+        Message message = new Message("image", title, null, author, recipient, isPublic, newExpiresOn);
         message.setObjectKey(objectKey);
 
         // Convert the multipart file into a java File
@@ -148,6 +154,8 @@ public class MessageService {
     public List<Message> findByIsPublic(String isPublic) {
         List<Message> messageList = messageRepository.findByIsPublic(isPublic);
 
+        messageList.sort((o1, o2) -> o2.getId().compareTo(o1.getId()));
+
         return messageList;
     }
 
@@ -179,5 +187,13 @@ public class MessageService {
         if (title.isEmpty()) {
             throw new MessageTitleCannotBeEmptyException();
         }
+    }
+
+    private LocalDateTime processRelativeExpireDate(LocalDateTime expiresOn, LocalDateTime actualTime) {
+        LocalDateTime now = LocalDateTime.now();
+
+        long hourDifference = now.minusHours(expiresOn.getHour()).getHour();
+
+        return expiresOn.plusHours(hourDifference);
     }
 }

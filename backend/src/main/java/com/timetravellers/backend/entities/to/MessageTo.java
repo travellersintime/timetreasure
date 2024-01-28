@@ -16,7 +16,5 @@ public class MessageTo {
     private String recipient;
     private String isPublic;
     private LocalDateTime expiresOn;
-    private int minutes;
-    private int hours;
-    private int days;
+    private LocalDateTime actualTime;
 }

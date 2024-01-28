@@ -55,11 +55,11 @@ public class PwResetService {
         emailSender.send(message);
     }
 
-    public void resetPassword(PwResetTo pwResetTo) throws CodeNotSentException, InvalidCodeException, InvalidPasswordException, UserDoesNotExistException {
+    public void resetPassword(PwResetTo pwResetTo) throws InvalidCodeException, InvalidPasswordException, UserDoesNotExistException {
         Optional<PwReset> pwReset = pwResetRepository.findByCode(pwResetTo.getCode());
 
         if (pwReset.isEmpty()) {
-            throw new CodeNotSentException();
+            throw new InvalidCodeException();
         }
 
         if (pwResetTo.getCode().equals(pwReset.get().getCode())) {

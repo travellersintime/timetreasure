@@ -20,13 +20,12 @@ const SignIn = (props: Props) => {
 
     const handleSignIn = async () => {
         try {
-          const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/auth/login", {username, password})
+          const response = await axios.post("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/auth/login", {username, password})
           await AsyncStorage.setItem('token', response.data.token);
           await AsyncStorage.setItem('username', username);
           props.navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: "MessageFeed"}]}));
 
         } catch (error) {
-            console.log(error.response);
             alert("Could not sign you in. Make sure that the credentials are correct and try again.");
         }
       };
@@ -35,20 +34,17 @@ const SignIn = (props: Props) => {
 
       const navigateToResetPassword = async () => {
         try {
-          const response = await axios.get("http://" + BACKEND_ADDRESS + ":" + BACKEND_PORT + "/auth/forgotPassword/" + emailAddress);
+          const response = await axios.get("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/auth/forgotPassword/" + emailAddress);
 
           if (response.status == 200) {
-            alert("A password recovery code has been sent to you. Please check your e-mail.");
+            alert("A password recovery code will be sent to your email, if it is valid.");
             setShowForgotPasswordModal(false);
             props.navigation.navigate('ResetPassword', {username: emailAddress});
           }
         } catch (error) {
-            if (error.response == undefined || error.response == "" || error.response.data === "") {
-                alert("Unknown error. It might be from the server. Please try again later.");
-            }
-            else {
-                alert(error.response.data);
-            }  
+            alert("A password recovery code will be sent to your email, if it is valid.");
+            setShowForgotPasswordModal(false);
+            props.navigation.navigate('ResetPassword', {username: emailAddress});
         }
 
     };

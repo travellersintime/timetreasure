@@ -33,7 +33,7 @@ const SingleMessage = (props: Props) => {
 
             const response = 
                 await axios.get (
-                    "http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/messages/id/" + activeRoute.params.messageId, 
+                    "http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/id/" + activeRoute.params.messageId, 
                     {
                         headers: {
                             'Authorization': authorizationHeader, 

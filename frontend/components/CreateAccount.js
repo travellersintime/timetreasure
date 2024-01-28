@@ -17,7 +17,7 @@ const CreateAccount = (props: Props) => {
 
     const handleCreateAccount = async () => {
         try {
-          const response = await axios.post("http://" + String(BACKEND_ADDRESS) + ":" + String(BACKEND_PORT) + "/auth/register", {username, password})
+          const response = await axios.post("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/auth/register", {username, password})
           await AsyncStorage.setItem('token', response.data.token);
           await AsyncStorage.setItem('username', username);
           props.navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: "MessageFeed"}]}));

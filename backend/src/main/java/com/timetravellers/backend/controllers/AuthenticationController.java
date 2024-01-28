@@ -73,8 +73,6 @@ public class AuthenticationController {
     public ResponseEntity resetPassword(@RequestBody PwResetTo pwResetTo) {
         try {
             pwResetService.resetPassword(pwResetTo);
-        } catch (CodeNotSentException e) {
-            return new ResponseEntity("Code has not been sent.", HttpStatus.BAD_REQUEST);
         } catch (InvalidCodeException e) {
             return new ResponseEntity("Specified code is invalid.", HttpStatus.BAD_REQUEST);
         } catch (InvalidPasswordException e) {
