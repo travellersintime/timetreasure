@@ -89,7 +89,7 @@ const CreateMessage = (props: Props) => {
 
             if (messageType === "text") {
 
-                const response = await axios.post("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/text", {
+                const response = await axios.post("http://" + String("Timetreasure-tomcat-env.eba-mm9rdhjj.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/text", {
                     title: messageTitle,
                     content: messageContent,
                     author: username,
@@ -131,7 +131,7 @@ const CreateMessage = (props: Props) => {
                 formData.append('actualTime', actualTimeDate.toISOString());
 
 
-                const response = await axios.post("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/image", formData, {
+                const response = await axios.post("http://" + String("Timetreasure-tomcat-env.eba-mm9rdhjj.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/image", formData, {
                     headers: {
                         'Authorization': authorizationHeader,
                         'Content-Type': 'multipart/form-data'

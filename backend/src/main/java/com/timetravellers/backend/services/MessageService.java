@@ -3,11 +3,13 @@ package com.timetravellers.backend.services;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.timetravellers.backend.entities.mongodb.History;
 import com.timetravellers.backend.entities.mongodb.Message;
 import com.timetravellers.backend.entities.mongodb.Role;
 import com.timetravellers.backend.entities.mongodb.User;
 import com.timetravellers.backend.entities.to.MessageTo;
 import com.timetravellers.backend.exceptions.messages.*;
+import com.timetravellers.backend.repositories.HistoryRepository;
 import com.timetravellers.backend.repositories.MessageRepository;
 import com.timetravellers.backend.repositories.UserRepository;
 import com.timetravellers.backend.utils.StringGenerator;
@@ -32,13 +34,15 @@ public class MessageService {
     private MessageRepository messageRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private HistoryRepository historyRepository;
 
     @Autowired
     private MessageValidator messageValidator;
     @Autowired
     private AmazonS3 amazonS3Client;
 
-    public Message insertTextMessage(MessageTo messageTo) throws MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException, MessageRecipientDoesNotExistException {
+    public Message insertTextMessage(MessageTo messageTo) throws MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException, MessageRecipientDoesNotExistException, MessageLimitExceededException {
         performMessageChecks(messageTo.getIsPublic(), messageTo.getRecipient().toLowerCase(), messageTo.getTitle());
 
         if (messageTo.getIsPublic().equals("false") && messageTo.getRecipient().isEmpty()) {
@@ -53,15 +57,23 @@ public class MessageService {
             throw new MessageContentCannotBeEmptyException();
         }
 
+        List<History> historyList = historyRepository.findByUsernameAndIssuedOnGreaterThan(messageTo.getAuthor(), LocalDateTime.now().minusHours(1));
+        if (historyList.size() >= 3) {
+            throw new MessageLimitExceededException();
+        }
+
         LocalDateTime newExpiresOn = processRelativeExpireDate(messageTo.getExpiresOn(), messageTo.getActualTime());
 
         Message message = new Message("text", messageTo.getTitle(), messageTo.getContent(), messageTo.getAuthor(), messageTo.getRecipient().toLowerCase(), messageTo.getIsPublic(), newExpiresOn);
+
+        History history = new History(messageTo.getAuthor(), LocalDateTime.now());
+        historyRepository.save(history);
 
         return messageRepository.save(message);
     }
 
 
-    public Message insertImageMessage(MultipartFile multipartFile, String title, String author, String recipient, String isPublic, String expiresOn, String actualTime) throws IOException, MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException, MessageRecipientDoesNotExistException {
+    public Message insertImageMessage(MultipartFile multipartFile, String title, String author, String recipient, String isPublic, String expiresOn, String actualTime) throws IOException, MessageRecipientCannotBeEmptyException, MessageTitleCannotBeEmptyException, MessageContentCannotBeEmptyException, MessageRecipientDoesNotExistException, MessageLimitExceededException {
         performMessageChecks(isPublic, recipient, title);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -79,6 +91,11 @@ public class MessageService {
         do {
             objectKey = StringGenerator.generateObjectKey();
         } while (!messageRepository.findByObjectKey(objectKey).isEmpty());
+
+        List<History> historyList = historyRepository.findByUsernameAndIssuedOnGreaterThan(author, LocalDateTime.now().minusHours(1));
+        if (historyList.size() >= 3) {
+            throw new MessageLimitExceededException();
+        }
 
         LocalDateTime newExpiresOn = processRelativeExpireDate(expiresOnDate, actualTimeDate);
 
@@ -101,6 +118,9 @@ public class MessageService {
         // Remove the create file from the backend
         file.delete();
         fileOutputStream.close();
+
+        History history = new History(author, LocalDateTime.now());
+        historyRepository.save(history);
 
         // Add the message to the database
         return messageRepository.save(message);

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,6 +34,8 @@ public class MessageController {
             return new ResponseEntity("Message content cannot be empty.", HttpStatus.BAD_REQUEST);
         } catch (MessageRecipientDoesNotExistException e) {
             return new ResponseEntity("Message recipient does not exist.", HttpStatus.BAD_REQUEST);
+        } catch (MessageLimitExceededException e) {
+            return new ResponseEntity("You can only send a maximum of 3 messages per hour. Please try again later", HttpStatus.BAD_REQUEST);
         }
 
         if (message == null) {
@@ -61,6 +62,8 @@ public class MessageController {
             return new ResponseEntity("Message content cannot be empty.", HttpStatus.BAD_REQUEST);
         } catch (MessageRecipientDoesNotExistException e) {
             return new ResponseEntity("Message recipient does not exist.", HttpStatus.BAD_REQUEST);
+        } catch (MessageLimitExceededException e) {
+            return new ResponseEntity("You can only send a maximum of 3 messages per hour. Please try again later", HttpStatus.BAD_REQUEST);
         }
 
         if (message == null) {

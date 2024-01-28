@@ -20,7 +20,7 @@ const SignIn = (props: Props) => {
 
     const handleSignIn = async () => {
         try {
-          const response = await axios.post("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/auth/login", {username, password})
+          const response = await axios.post("http://" + String("Timetreasure-tomcat-env.eba-mm9rdhjj.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/auth/login", {username, password})
           await AsyncStorage.setItem('token', response.data.token);
           await AsyncStorage.setItem('username', username);
           props.navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: "MessageFeed"}]}));
@@ -34,7 +34,7 @@ const SignIn = (props: Props) => {
 
       const navigateToResetPassword = async () => {
         try {
-          const response = await axios.get("http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/auth/forgotPassword/" + emailAddress);
+          const response = await axios.get("http://" + String("Timetreasure-tomcat-env.eba-mm9rdhjj.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/auth/forgotPassword/" + emailAddress);
 
           if (response.status == 200) {
             alert("A password recovery code will be sent to your email, if it is valid.");

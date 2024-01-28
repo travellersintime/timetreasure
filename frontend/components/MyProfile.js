@@ -36,7 +36,7 @@ const MyProfile = (props: Props) => {
         try {
             const response = 
                 await axios.delete (
-                    "http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/delete/" + messageId, 
+                    "http://" + String("Timetreasure-tomcat-env.eba-mm9rdhjj.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/delete/" + messageId, 
                     {
                         headers: {
                             'Authorization': authorizationHeader, 
@@ -70,7 +70,7 @@ const MyProfile = (props: Props) => {
 
             const response = 
                 await axios.get (
-                    "http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/recipient/" + username, 
+                    "http://" + String("Timetreasure-tomcat-env.eba-mm9rdhjj.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/recipient/" + username, 
                     {
                         headers: {
                             'Authorization': authorizationHeader, 

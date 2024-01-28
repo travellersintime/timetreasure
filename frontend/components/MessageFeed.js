@@ -34,7 +34,7 @@ const MessageFeed = () => {
 
             const response = 
                 await axios.get (
-                    "http://" + String("webapp-tomcat-env.eba-amevs3av.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/isPublic/true", 
+                    "http://" + String("Timetreasure-tomcat-env.eba-mm9rdhjj.eu-north-1.elasticbeanstalk.com") + ":" + String("80") + "/messages/isPublic/true", 
                     {
                         headers: {
                             'Authorization': authorizationHeader, 
